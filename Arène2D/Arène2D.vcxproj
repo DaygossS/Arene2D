@@ -128,6 +128,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Arène2D.cpp" />
+    <ClCompile Include="Context.cpp" />
+    <ClCompile Include="FightState.cpp" />
+    <ClCompile Include="Orc.cpp" />
+    <ClCompile Include="RoamState.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateMachine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="conditions.h" />
+    <ClInclude Include="Context.h" />
+    <ClInclude Include="FightState.h" />
+    <ClInclude Include="Orc.h" />
+    <ClInclude Include="RoamState.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateMachine.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="State.inl" />
+    <None Include="StateMachine.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
