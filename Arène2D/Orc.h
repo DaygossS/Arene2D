@@ -7,6 +7,8 @@
 //#include "NpcStates/PatrolState.h"
 #include "Conditions.h"
 #include "Context.h"
+#include "FightState.h"
+#include "RoamState.h"
 
 using namespace OrcAI;
 
@@ -21,17 +23,17 @@ public:
 
     void Init()
     {
-        //PatrolState* patrolState = fsm.CreateState<PatrolState>();
-        //ChaseState* chaseState = fsm.CreateState<ChaseState>();
+        FightState* fightState = fsm.CreateState<FightState>();
+        RoamState* roamState = fsm.CreateState<RoamState>();
 
-        //patrolState->AddTransition(Conditions::IsSeeingPlayer, chaseState);
+        roamState->AddTransition(Conditions::IsSeeingPlayer, fightState);
 
-        //chaseState->AddTransition([](const NpcContext _context)
-        //    {
-        //        return !Conditions::IsSeeingPlayer(_context);
-        //    }, patrolState);
+        fightState->AddTransition([](const Context _context)
+            {
+                return !Conditions::IsSeeingPlayer(_context);
+            }, roamState);
 
-        //fsm.Init(patrolState, context);
+        fsm.Init(roamState, context);
     }
 
     void Update()

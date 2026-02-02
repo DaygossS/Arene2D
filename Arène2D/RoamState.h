@@ -10,7 +10,7 @@
 
 namespace OrcAI
 {
-    class PatrolState : public FSM::State<Context>
+    class RoamState : public FSM::State<Context>
     {
         void Enter(Context _context) override
         {
