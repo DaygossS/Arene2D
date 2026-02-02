@@ -4,20 +4,22 @@
 #include <ostream>
 
 #include "Context.h"
-#include "StateMachine/State.h"
+//#include "StateMachine/State.h"
+#include "State.h"
+
 
 namespace OrcAI
 {
-    class PatrolState : public FSM::State<NpcContext>
+    class PatrolState : public FSM::State<Context>
     {
-        void Enter(NpcContext _context) override
+        void Enter(Context _context) override
         {
-            std::cout << "Enter Patrol _State" << std::endl;
+            std::cout << "Enter Roaming _State" << std::endl;
         }
 
-        void Exit(NpcContext _context) override
+        void Exit(Context _context) override
         {
-            std::cout << "Exit Patrol _State" << std::endl;
+            std::cout << "Exit Roaming _State" << std::endl;
         }
     };
 }
