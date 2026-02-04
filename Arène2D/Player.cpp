@@ -3,7 +3,7 @@
 Player::Player(float startX, float startY) {
 	m_shape.setSize({ 8.f, 8.f });
 	m_shape.setPosition({startX, startY});
-	m_shape.setFillColor(sf::Color(0, 255, 206));
+	m_shape.setFillColor(sf::Color(100, 100 ,100));
 	m_speed = 150.f;
 	m_velocity = { 0.f, 0.f };
 }
