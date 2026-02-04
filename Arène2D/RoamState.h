@@ -8,7 +8,7 @@
 #include "State.h"
 
 
-namespace OrcAI
+namespace AI
 {
     class RoamState : public FSM::State<Context>
     {

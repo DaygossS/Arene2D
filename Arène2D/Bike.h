@@ -9,11 +9,16 @@
 #include "Context.h"
 #include "FightState.h"
 #include "RoamState.h"
+#include <vector>
+#include <SFML/Graphics.hpp>
+#include <iostream>
 
-using namespace OrcAI;
+using namespace AI;
 
 class Npc
 {
+private:
+    sf::Vector2f pos = {0.f,0.f};
 public:
     int value = 100;
 
@@ -21,16 +26,20 @@ public:
 
     Context context{};
 
+    sf::Vector2f GetPosition() {
+        return pos;
+    }
+
     void Init()
     {
         FightState* fightState = fsm.CreateState<FightState>();
         RoamState* roamState = fsm.CreateState<RoamState>();
 
-        roamState->AddTransition(Conditions::IsSeeingPlayer, fightState);
+        roamState->AddTransition(Conditions::IsClosePlayer, fightState);
 
         fightState->AddTransition([](const Context _context)
             {
-                return !Conditions::IsSeeingPlayer(_context);
+                return !Conditions::IsClosePlayer(_context);
             }, roamState);
 
         fsm.Init(roamState, context);

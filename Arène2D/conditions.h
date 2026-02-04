@@ -2,14 +2,17 @@
 
 #include "Context.h"
 
-namespace OrcAI
+namespace AI
 {
     class Conditions
     {
     public:
-        static bool IsSeeingPlayer(Context context)
+        static bool IsClosePlayer(Context context)
         {
-            // Check vision
+            sf::Vector2f posme;
+            //sf::Vector2f player = ;
+            sf::Vector2f player = { 0.f,0.f };
+            //temporary while i wait for the player
 
             return true;
         }

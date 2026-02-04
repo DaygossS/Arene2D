@@ -139,7 +139,7 @@
     <ClInclude Include="conditions.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="FightState.h" />
-    <ClInclude Include="Orc.h" />
+    <ClInclude Include="Bike.h" />
     <ClInclude Include="RoamState.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateMachine.h" />
