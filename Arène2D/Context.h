@@ -13,7 +13,7 @@ public:
     Bike* npc2;
     Bike* npc3;
     
-    
+    int targetia = 0;
     // Input
     sf::Vector2f GetPosition(auto player) {
         return player.Getposition();
