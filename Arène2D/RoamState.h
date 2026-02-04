@@ -21,5 +21,11 @@ namespace AI
         {
             std::cout << "Exit Roaming _State" << std::endl;
         }
+
+        void Execute(Context _context) override
+        {
+            //just make sure to survive
+            //make sure to not get caught
+        }
     };
 }

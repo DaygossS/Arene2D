@@ -19,5 +19,12 @@ namespace AI
         {
             std::cout << "Exit Hunting _State" << std::endl;
         }
+
+        void Execute(Context _context) override
+        {
+            //look at player direction
+            //try to cut him off
+            //make sure to not get caught
+        }
     };
 }
