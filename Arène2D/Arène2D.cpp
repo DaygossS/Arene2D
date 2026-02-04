@@ -27,41 +27,74 @@ void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::st
         count++;
     }
 }
+bool isCollidingWithMap(const sf::FloatRect& bounds, const std::vector<int>& collisions) {
+    
+    sf::Vector2f points[4] = {
+        { bounds.position.x, bounds.position.y },                                     // Haut-Gauche
+        { bounds.position.x + bounds.size.x, bounds.position.y },                     // Haut-Droite
+        { bounds.position.x, bounds.position.y + bounds.size.y },                     // Bas-Gauche
+        { bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y }      // Bas-Droite
+    };
+
+    
+    for (int i = 0; i < 4; i++) {
+        
+        int gridX = (int)(points[i].x / TILE_SIZE);
+        int gridY = (int)(points[i].y / TILE_SIZE);
+
+        
+        if (gridX >= 0 && gridX < MAP_WIDTH && gridY >= 0 && gridY < MAP_HEIGHT) {
+            int index = gridY * MAP_WIDTH + gridX;
+
+            
+            if (collisions[index] == 1) {
+                return true; 
+            }
+        }
+        else {
+            
+            return true;
+        }
+    }
+
+    return false; 
+}
 
 int main() {
     sf::RenderWindow window(sf::VideoMode({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }), "TRON GAME");
     window.setFramerateLimit(60);
 
-    // 1. Charger les décors (Murs, Sol)
+    
     sf::Texture tileset = createTronTexture(TILE_SIZE, TEXTURE_COLS);
     sf::Sprite mapSprite(tileset);
 
-    // 2. Créer le "Calque de Trainée" (Canvas)
+    
     sf::RenderTexture trailTexture;
-    // On le crée de la taille exacte de la fenêtre/carte
-    trailTexture.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) });
-    // On le remplit de transparent au début
+    
+    trailTexture.resize({(unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE)});
+    
     trailTexture.clear(sf::Color::Transparent);
 
-    // Le Sprite qui servira à afficher ce calque
+    
     sf::Sprite trailDisplay(trailTexture.getTexture());
 
-    // Chargement de la carte (Grille)
+    
     std::vector<int> map(MAP_WIDTH * MAP_HEIGHT, 0);
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
-    openMap(map, collisions, "niveau3.txt");
+    openMap(map, collisions, "niveau5.txt");
 
-    // Création du joueur (supposons qu'il fait 8px dans ton Player.cpp)
-    Player player(100.f, 100.f);
+    
+    Player player(100.f, 300.f);
 
-    // Un petit rectangle qu'on utilisera comme "pinceau"
+    
     sf::RectangleShape trailBrush;
-    trailBrush.setFillColor(sf::Color::Cyan); // Couleur de la trainée
+    trailBrush.setFillColor(sf::Color::White); 
 
     sf::Clock clock;
 
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
+
 
         while (const auto event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) window.close();
@@ -72,7 +105,7 @@ int main() {
 
         player.handleInput();
         player.update(deltaTime);
-
+        sf::FloatRect playerBounds(player.getPosition(), player.getSize());
 
         trailBrush.setSize({ player.getSize().x - 2,player.getSize().y - 2 });
         trailBrush.setPosition({player.getPosition().x + 1, player.getPosition().y + 1});
@@ -95,11 +128,16 @@ int main() {
                 window.draw(mapSprite);
             }
         }
+        if (isCollidingWithMap(playerBounds, collisions)) {
+            player = Player(100.f, 300.f);
+            trailTexture.clear(sf::Color::Transparent);
+        }
 
-        // 2. Ensuite la trainée par dessus le sol
+
+        
         window.draw(trailDisplay);
 
-        // 3. Enfin le joueur par dessus tout
+        
         player.draw(window);
 
         window.display();
