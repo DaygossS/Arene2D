@@ -80,8 +80,8 @@ int main() {
             if (event->is<sf::Event::Closed>()) window.close();
 
             else if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
-                if (key->scancode == sf::Keyboard::Scancode::S) saveMap(map, collisions, "niveau4.txt");
-                if (key->scancode == sf::Keyboard::Scancode::O) openMap(map, collisions, "niveau3.txt");
+                if (key->scancode == sf::Keyboard::Scancode::S) saveMap(map, collisions, "niveau5.txt");
+                if (key->scancode == sf::Keyboard::Scancode::O) openMap(map, collisions, "niveau4.txt");
                 if (key->scancode == sf::Keyboard::Scancode::C) {
                     editCollisionMode = !editCollisionMode;
                     if (editCollisionMode) window.setTitle("MODE COLLISION");
