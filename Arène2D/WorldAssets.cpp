@@ -1,42 +1,45 @@
 #include "WorldAssets.hpp"
+#include <iostream>
 
 sf::Texture createTronTexture(int tileSize, int cols) {
     sf::RenderTexture rt;
 
-   
-    rt.resize({ static_cast<unsigned int>(tileSize * cols), static_cast<unsigned int>(tileSize) });
+    static sf::Color Bleu = sf::Color(0, 50, 100);
+
+    if (!rt.resize(sf::Vector2u{ (unsigned int)(tileSize * cols), (unsigned int)(tileSize) }))
+        std::cerr << "La RenderTexture n'a pas pu être resize" << std::endl;
     rt.clear(sf::Color::Black);
 
-    sf::RectangleShape rect(sf::Vector2f((float)tileSize, (float)tileSize));
-    rect.setFillColor(sf::Color::Transparent);
-    rect.setOutlineThickness(-2.f);
+    sf::RectangleShape grille(sf::Vector2f((float)tileSize, (float)tileSize));
+    grille.setFillColor(sf::Color::Transparent);
+    grille.setOutlineThickness(-2.f);
 
     
-    rect.setPosition({ 0.f, 0.f });
-    rect.setOutlineColor(sf::Color(0, 50, 100));
-    rect.setOutlineThickness(-1.f);
-    rt.draw(rect);
+    grille.setPosition({ 0.f, 0.f });
+    grille.setOutlineColor(Bleu);
+    grille.setOutlineThickness(-1.f);
+    rt.draw(grille);
 
     
-    rect.setPosition({ (float)tileSize, 0.f });
-    rect.setOutlineColor(sf::Color::Cyan);
-    rect.setOutlineThickness(-3.f);
-    rect.setFillColor(sf::Color::Cyan);
-    rt.draw(rect);
+    grille.setPosition({ (float)tileSize, 0.f });
+    grille.setOutlineColor(sf::Color::Cyan);
+    grille.setOutlineThickness(-3.f);
+    grille.setFillColor(sf::Color::Cyan);
+    rt.draw(grille);
 
     
-    rect.setPosition({ (float)tileSize * 2, 0.f });
-    rect.setOutlineColor(sf::Color(255, 100, 0));
-    rect.setOutlineThickness(-3.f);
-    rect.setFillColor(sf::Color(255, 100, 0, 50));
-    rt.draw(rect);
+    grille.setPosition({ (float)tileSize * 2, 0.f });
+    grille.setOutlineColor(sf::Color(255, 100, 0));
+    grille.setOutlineThickness(-3.f);
+    grille.setFillColor(sf::Color(255, 100, 0, 50));
+    rt.draw(grille);
 
 
-    rect.setPosition({ (float)tileSize * 3, 0.f });
-    rect.setOutlineColor(sf::Color::Magenta);
-    rect.setOutlineThickness(-3.f);
-    rect.setFillColor(sf::Color(255, 0, 255, 50));
-    rt.draw(rect);
+    grille.setPosition({ (float)tileSize * 3, 0.f });
+    grille.setOutlineColor(sf::Color::Magenta);
+    grille.setOutlineThickness(-3.f);
+    grille.setFillColor(sf::Color(255, 0, 255, 50));
+    rt.draw(grille);
 
     rt.display();
     return rt.getTexture();
