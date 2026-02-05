@@ -114,11 +114,20 @@ int main() {
     sf::Texture tileset = createTronTexture(TILE_SIZE, TEXTURE_COLS);
     sf::Sprite mapSprite(tileset);
 
-    sf::Texture playerTexture;
-    if (!playerTexture.loadFromFile("../Assets/player.png")) {
-        std::cerr << "impossible de charger l'asset" << std::endl;
+    sf::Texture playerZ, playerS, playerQ, playerD;
+    if (!playerZ.loadFromFile("../Assets/Player/playerZ.png")) {
+        std::cerr << "impossible de charger playerZ" << std::endl;
     }
-
+    if (!playerS.loadFromFile("../Assets/Player/playerS.png")) {
+        std::cerr << "impossible de charger playerS" << std::endl;
+    }
+    if (!playerQ.loadFromFile("../Assets/Player/playerQ.png")) {
+        std::cerr << "impossible de charger playerQ" << std::endl;
+    }
+    if (!playerD.loadFromFile("../Assets/Player/playerD.png")) {
+        std::cerr << "impossible de charger playerD" << std::endl;
+    }
+    PlayerTextures playerAssets = {playerZ, playerS, playerQ, playerD};
     
     sf::RenderTexture trailTexture;
     trailTexture.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) });
@@ -136,7 +145,7 @@ int main() {
     openMap(map, collisions, "niveau2.txt");
 
     
-    Player player(100.f, 300.f, playerTexture);
+    Player player(100.f, 300.f, playerAssets);
 
     
     sf::RectangleShape trailBrush;
@@ -173,7 +182,7 @@ int main() {
 
         if (isDead) {
             
-            player = Player(100.f, 300.f, playerTexture);
+            player.reset(100.f, 300.f);
 
             
             trailTexture.clear(sf::Color::Transparent);

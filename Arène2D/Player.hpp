@@ -1,13 +1,20 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 
+struct PlayerTextures {
+	const sf::Texture& up;
+	const sf::Texture& down;
+	const sf::Texture& left;
+	const sf::Texture& right;
+};
+
 class Player
 {
 public :
 
-	Player(float startX, float startY, const sf::Texture& texture);
+	Player(float startX, float startY, const PlayerTextures& texture);
 
-
+	void reset(float startX, float startY);
 	void handleInput();
 	void update(float deltaTime);
 	void draw(sf::RenderWindow& window);
@@ -19,5 +26,6 @@ private:
 	sf::Sprite sprite;
 	sf::Vector2f m_velocity;
 	float m_speed;
+	PlayerTextures textures;
 };
 
