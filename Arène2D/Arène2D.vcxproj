@@ -130,10 +130,12 @@
     <ClCompile Include="Arène2D.cpp" />
     <ClCompile Include="MainCreateurLevel.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Trail.cpp" />
     <ClCompile Include="WorldAssets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Trail.h" />
     <ClInclude Include="WorldAssets.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

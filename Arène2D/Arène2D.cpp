@@ -4,7 +4,7 @@
 #include "WorldAssets.hpp"
 #include "Player.hpp"
 
-//placed also un player cpp if changes are needed
+//placed also un Trail cpp if changes are needed
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
 const int MAP_HEIGHT = 28;
@@ -152,20 +152,20 @@ int main() {
             isDead = true;
         }
         
-        else if (isCollidingWithTrail(playerBounds,player.getVelocity(), player.GettrailMask())) {
-            isDead = true;
-        }
+        //else if (isCollidingWithTrail(playerBounds,player.getVelocity(), player.GettrailMask())) {
+        //    isDead = true;
+        //}
 
         if (isDead) {
             
             player = Player(100.f, 300.f);
 
             
-            player.CleartrailTexture();
+            /*player.CleartrailTexture();
 
             sf::Image tempo = player.GettrailMask();
             tempo.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
-            player.SettrailMask(tempo);
+            player.SettrailMask(tempo);*/
 
             
             continue;
