@@ -1,6 +1,5 @@
-//#include "Trail.cpp"
-#include "Player.hpp"
 
+#include "Player.hpp"
 
 Player::Player(float startX, float startY){
 	m_shape.setSize({ 8.f, 8.f });

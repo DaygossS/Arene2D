@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Trail.cpp"
 #include "SFML/Graphics.hpp"
 
 class Player

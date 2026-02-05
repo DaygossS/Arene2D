@@ -5,9 +5,9 @@
 #include "Player.hpp"
 
 //placed also un Trail cpp if changes are needed
-const int TILE_SIZE = 32;
-const int MAP_WIDTH = 50;
-const int MAP_HEIGHT = 28;
+//const int TILE_SIZE = 32;
+//const int MAP_WIDTH = 50;
+//const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 
 
