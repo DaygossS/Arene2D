@@ -38,19 +38,20 @@ void Player::update(float deltaTime){
 	m_shape.move(m_speed * m_velocity * deltaTime);
 	trailTexture.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) });
 	trailMask.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
-
+	
+	trailBrush.setSize({ m_shape.getSize().x - 2, m_shape.getSize().y - 2 });
+	trailBrush.setPosition({ m_shape.getPosition().x + 1, m_shape.getPosition().y + 1 });
+	trailTexture.draw(trailBrush);
 
 }
 
 void Player::draw(sf::RenderWindow& window) {
 
 	window.draw(m_shape);
-	trailTexture.clear(sf::Color::Transparent);
+	//trailTexture.clear(sf::Color::Transparent);
 	
 
-	trailBrush.setSize({ m_shape.getSize().x - 2, m_shape.getSize().y - 2 });
-	trailBrush.setPosition({ m_shape.getPosition().x + 1, m_shape.getPosition().y + 1 });
-	trailTexture.draw(trailBrush);
+	
 	trailTexture.display();
 
 
