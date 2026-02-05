@@ -3,6 +3,7 @@
 #include <fstream>
 #include "WorldAssets.hpp"
 #include "Player.hpp"
+#include <iostream>
 
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
@@ -113,6 +114,11 @@ int main() {
     sf::Texture tileset = createTronTexture(TILE_SIZE, TEXTURE_COLS);
     sf::Sprite mapSprite(tileset);
 
+    sf::Texture playerTexture;
+    if (!playerTexture.loadFromFile("../Assets/player.png")) {
+        std::cerr << "impossible de charger l'asset" << std::endl;
+    }
+
     
     sf::RenderTexture trailTexture;
     trailTexture.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) });
@@ -130,7 +136,7 @@ int main() {
     openMap(map, collisions, "niveau2.txt");
 
     
-    Player player(100.f, 300.f);
+    Player player(100.f, 300.f, playerTexture);
 
     
     sf::RectangleShape trailBrush;
@@ -153,7 +159,7 @@ int main() {
 
         
 
-        sf::FloatRect playerBounds(player.getPosition(), player.getSize());
+        sf::FloatRect playerBounds(player.getPosition(), player.getScale());
         bool isDead = false;
 
         
@@ -167,7 +173,7 @@ int main() {
 
         if (isDead) {
             
-            player = Player(100.f, 300.f);
+            player = Player(100.f, 300.f, playerTexture);
 
             
             trailTexture.clear(sf::Color::Transparent);
@@ -180,7 +186,7 @@ int main() {
         }
 
         
-        trailBrush.setSize({ player.getSize().x - 2, player.getSize().y - 2 });
+        trailBrush.setSize({6, 6});
         trailBrush.setPosition({ player.getPosition().x + 1, player.getPosition().y + 1 });
         trailTexture.draw(trailBrush);
         trailTexture.display();
@@ -188,8 +194,8 @@ int main() {
         
         int startX = (int)(player.getPosition().x + 1);
         int startY = (int)(player.getPosition().y + 1);
-        int endX = startX + (int)(player.getSize().x - 2);
-        int endY = startY + (int)(player.getSize().y - 2);
+        int endX = startX + (int)(player.getScale().x - 2);
+        int endY = startY + (int)(player.getScale().y - 2);
 
         sf::Vector2u maskSize = trailMask.getSize();
 

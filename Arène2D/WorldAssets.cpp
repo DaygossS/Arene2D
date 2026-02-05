@@ -5,6 +5,7 @@ sf::Texture createTronTexture(int tileSize, int cols) {
     sf::RenderTexture rt;
 
     static sf::Color Bleu = sf::Color(0, 50, 100);
+    static sf::Color Orange = sf::Color(255, 100, 0);
 
     if (!rt.resize(sf::Vector2u{ (unsigned int)(tileSize * cols), (unsigned int)(tileSize) }))
         std::cerr << "La RenderTexture n'a pas pu être resize" << std::endl;
@@ -29,16 +30,16 @@ sf::Texture createTronTexture(int tileSize, int cols) {
 
     
     grille.setPosition({ (float)tileSize * 2, 0.f });
-    grille.setOutlineColor(sf::Color(255, 100, 0));
+    grille.setOutlineColor(sf::Color(Orange));
     grille.setOutlineThickness(-3.f);
-    grille.setFillColor(sf::Color(255, 100, 0, 50));
+    grille.setFillColor(sf::Color(255, 100, 0, 50)); //Orange Transparent
     rt.draw(grille);
 
 
     grille.setPosition({ (float)tileSize * 3, 0.f });
     grille.setOutlineColor(sf::Color::Magenta);
     grille.setOutlineThickness(-3.f);
-    grille.setFillColor(sf::Color(255, 0, 255, 50));
+    grille.setFillColor(sf::Color(255, 0, 255, 50)); //Magenta Transparent
     rt.draw(grille);
 
     rt.display();
