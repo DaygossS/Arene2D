@@ -20,11 +20,11 @@ class Npc
 private:
     //sf::Vector2f pos = {0.f,0.f};
     sf::RectangleShape m_shape;
-    sf::Vector2f m_velocity;
     float m_speed;
 public:
     int value = 100;
 
+    sf::Vector2f m_velocity;
     FSM::StateMachine<Context> fsm;
 
     Context context{};
@@ -58,4 +58,29 @@ public:
     }
 };
 
+
+
+
+
+//#include "SFML/Graphics.hpp"
+//
+//class Player
+//{
+//public:
+//
+//    Player(float startX, float startY);
+//
+//
+//    void handleInput();
+//    void update(float deltaTime);
+//    void draw(sf::RenderWindow& window);
+//
+//    sf::Vector2f getPosition() const { return m_shape.getPosition(); }
+//    sf::Vector2f getSize() const { return m_shape.getSize(); }
+//    sf::Vector2f getVelocity() const { return m_velocity; }
+//private:
+//    sf::RectangleShape m_shape;
+//    sf::Vector2f m_velocity;
+//    float m_speed;
+//};
 

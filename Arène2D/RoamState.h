@@ -7,7 +7,6 @@
 //#include "StateMachine/State.h"
 #include "State.h"
 
-
 namespace AI
 {
     class RoamState : public FSM::State<Context>
@@ -24,8 +23,10 @@ namespace AI
 
         void Execute(Context _context) override
         {
-            //just make sure to survive
-            //make sure to not get caught
+            auto me = &(_context.npc) ;
+
+            me.m_velocity.x = 1.f;
+            me.m_velocity.y = 0.f;
         }
     };
 }
