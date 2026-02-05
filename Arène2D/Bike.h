@@ -18,7 +18,10 @@ using namespace AI;
 class Npc
 {
 private:
-    sf::Vector2f pos = {0.f,0.f};
+    //sf::Vector2f pos = {0.f,0.f};
+    sf::RectangleShape m_shape;
+    sf::Vector2f m_velocity;
+    float m_speed;
 public:
     int value = 100;
 
@@ -27,8 +30,12 @@ public:
     Context context{};
 
     sf::Vector2f GetPosition() {
-        return pos;
+        return m_shape.getPosition();
     }
+    sf::Vector2f getSize() const { return m_shape.getSize(); }
+    sf::Vector2f getVelocity() const { return m_velocity; }
+
+    void draw(sf::RenderWindow& window);
 
     void Init()
     {
