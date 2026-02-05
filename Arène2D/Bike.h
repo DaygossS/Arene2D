@@ -19,6 +19,10 @@ class Npc
 {
 private:
     sf::Vector2f pos = {0.f,0.f};
+    sf::RectangleShape m_shape;
+    sf::Vector2f m_velocity;
+    float m_speed;
+
 public:
     int value = 100;
 

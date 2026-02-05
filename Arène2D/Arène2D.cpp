@@ -4,6 +4,7 @@
 #include "WorldAssets.hpp"
 #include "Player.hpp"
 
+//placed also un player cpp if changes are needed
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
 const int MAP_HEIGHT = 28;
@@ -114,16 +115,6 @@ int main() {
     sf::Sprite mapSprite(tileset);
 
     
-    sf::RenderTexture trailTexture;
-    trailTexture.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) });
-    trailTexture.clear(sf::Color::Transparent);
-    sf::Sprite trailDisplay(trailTexture.getTexture());
-
-    
-    sf::Image trailMask;
-    trailMask.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
-
-    
     std::vector<int> map(MAP_WIDTH * MAP_HEIGHT, 0);
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
     
@@ -133,8 +124,8 @@ int main() {
     Player player(100.f, 300.f);
 
     
-    sf::RectangleShape trailBrush;
-    trailBrush.setFillColor(sf::Color::White); 
+    /*sf::RectangleShape trailBrush;
+    trailBrush.setFillColor(sf::Color::White); */
 
     sf::Clock clock;
 
@@ -161,7 +152,7 @@ int main() {
             isDead = true;
         }
         
-        else if (isCollidingWithTrail(playerBounds,player.getVelocity(), trailMask)) {
+        else if (isCollidingWithTrail(playerBounds,player.getVelocity(), player.GettrailMask())) {
             isDead = true;
         }
 
@@ -170,38 +161,39 @@ int main() {
             player = Player(100.f, 300.f);
 
             
-            trailTexture.clear(sf::Color::Transparent);
+            player.CleartrailTexture();
 
-           
-            trailMask.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
+            sf::Image tempo = player.GettrailMask();
+            tempo.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
+            player.SettrailMask(tempo);
 
             
             continue;
         }
 
         
-        trailBrush.setSize({ player.getSize().x - 2, player.getSize().y - 2 });
-        trailBrush.setPosition({ player.getPosition().x + 1, player.getPosition().y + 1 });
-        trailTexture.draw(trailBrush);
-        trailTexture.display();
+        //trailBrush.setSize({ player.getSize().x - 2, player.getSize().y - 2 });
+        //trailBrush.setPosition({ player.getPosition().x + 1, player.getPosition().y + 1 });
+        //trailTexture.draw(trailBrush);
+        //trailTexture.display();
 
         
-        int startX = (int)(player.getPosition().x + 1);
+        /*int startX = (int)(player.getPosition().x + 1);
         int startY = (int)(player.getPosition().y + 1);
         int endX = startX + (int)(player.getSize().x - 2);
-        int endY = startY + (int)(player.getSize().y - 2);
+        int endY = startY + (int)(player.getSize().y - 2);*/
 
-        sf::Vector2u maskSize = trailMask.getSize();
+        /*sf::Vector2u maskSize = player.GettrailMask().getSize();
 
         
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (x >= 0 && x < (int)maskSize.x && y >= 0 && y < (int)maskSize.y) {
                     
-                    trailMask.setPixel({ (unsigned int)x, (unsigned int)y }, sf::Color::White);
+                    player.GettrailMask().setPixel({ (unsigned int)x, (unsigned int)y }, sf::Color::White);
                 }
             }
-        }
+        }*/
 
        
         window.clear(sf::Color::Black);
@@ -220,7 +212,7 @@ int main() {
         }
 
         
-        window.draw(trailDisplay);
+        //window.draw(player.trailDisplay());
 
         
         player.draw(window);
