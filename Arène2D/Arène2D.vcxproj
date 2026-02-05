@@ -130,7 +130,7 @@
     <ClCompile Include="Arène2D.cpp" />
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="FightState.cpp" />
-    <ClCompile Include="Orc.cpp" />
+    <ClCompile Include="Bike.cpp" />
     <ClCompile Include="RoamState.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateMachine.cpp" />
