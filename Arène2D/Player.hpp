@@ -13,7 +13,7 @@ class Player
 public :
 
 	Player(float startX, float startY, const PlayerTextures& texture);
-
+	sf::FloatRect getBounds() const;
 	void reset(float startX, float startY);
 	void handleInput();
 	void update(float deltaTime);
@@ -27,5 +27,6 @@ private:
 	sf::Vector2f m_velocity;
 	float m_speed;
 	PlayerTextures textures;
+
 };
 
