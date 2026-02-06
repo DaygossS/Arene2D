@@ -14,7 +14,7 @@ Npc::Npc(float startX, float startY, const sf::Texture& texture) : sprite(textur
 	sprite.setScale({ 0.5f, 0.5f });
 	sprite.setPosition({ startX, startY });
 	m_speed = 150.f;
-	m_velocity = { 0.f, 0.f };
+	m_velocity = { -1.f, 0.f };
 }
 
 
