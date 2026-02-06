@@ -3,7 +3,6 @@
 #include <fstream>
 #include "WorldAssets.hpp"
 #include "Player.hpp"
-#include "Bike.cpp"
 #include <iostream>
 
 const int TILE_SIZE = 32;
@@ -12,6 +11,7 @@ const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 
 
+#include "Bike.cpp"
 
 void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
     std::ifstream file(filename);
@@ -178,7 +178,7 @@ int main() {
         }
 
 
-        npc.Update(deltaTime);
+        npc.Update(deltaTime,collisions,trailMask,trailMask2);
 
 
         player.handleInput();

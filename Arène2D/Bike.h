@@ -57,7 +57,7 @@ public:
         fsm.Init(roamState, context);
     }
 
-    void Update(float deltaTime)
+    void Update(float deltaTime, std::vector<int> collisions, sf::Image trailMask,sf::Image trailMask2)
     {
         fsm.Update(context);
 
@@ -77,6 +77,24 @@ public:
         else if (choice == 4 && (m_velocity.x != -1.f)) {
             m_velocity.x = 1.f;
             m_velocity.y = 0.f;
+        }
+
+
+        sf::FloatRect IaBounds(GetPosition(), getSize());
+        bool willdie = false;
+        
+        if (IAisCollidingWithMap(IaBounds, collisions)) {
+            willdie = true;
+        }
+        else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask)) {
+            willdie = true;
+        }
+        else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask2)) {
+            willdie = true;
+        }
+
+        if (willdie) {
+            std::cout << "i'm Dead" << std::endl;
         }
 
         sprite.move(m_speed * m_velocity * deltaTime);
