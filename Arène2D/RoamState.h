@@ -23,6 +23,8 @@ namespace AI
 
         void Execute(Context _context) override
         {
+            
+                
             //auto me = &(_context.npc) ;
 
             //me.m_velocity.x = 1.f;

@@ -18,7 +18,7 @@ namespace AI
             sf::Vector2f player = { 0.f,0.f };
             //temporary while i wait for the player
             //if (sqrt(std::pow(abs(posme.x - player.x),2) + std::pow(abs(posme.y - player.y),2)) <= 20.f) {
-                return true;
+                return false;
             //}
             //else {
             //    return false;

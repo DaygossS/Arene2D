@@ -57,9 +57,29 @@ public:
         fsm.Init(roamState, context);
     }
 
-    void Update()
+    void Update(float deltaTime)
     {
         fsm.Update(context);
+
+        int choice = rand() % 30;
+        if (choice==1 && (m_velocity.y != 1.f)) {
+            m_velocity.y = -1.f;
+            m_velocity.x = 0.f;
+        }
+        else if (choice == 2 && (m_velocity.y != -1.f)) {
+            m_velocity.y = 1.f;
+            m_velocity.x = 0.f;
+        }
+        else if (choice == 3 && (m_velocity.x != 1.f)) {
+            m_velocity.x = -1.f;
+            m_velocity.y = 0.f;
+        }
+        else if (choice == 4 && (m_velocity.x != -1.f)) {
+            m_velocity.x = 1.f;
+            m_velocity.y = 0.f;
+        }
+
+        sprite.move(m_speed * m_velocity * deltaTime);
     }
 };
 

@@ -137,6 +137,20 @@ int main() {
 
 
 
+    //IA? Draw
+    sf::RenderTexture trailTexture2;
+    trailTexture2.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) });
+    trailTexture2.clear(sf::Color::Transparent);
+    sf::Sprite trailDisplay2(trailTexture2.getTexture());
+    sf::Image trailMask2;
+    trailMask2.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
+    sf::RectangleShape trailBrush2;
+    trailBrush2.setFillColor(sf::Color::Red);
+
+
+
+
+
     std::vector<int> map(MAP_WIDTH * MAP_HEIGHT, 0);
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
     
@@ -164,7 +178,7 @@ int main() {
         }
 
 
-        npc.Update();
+        npc.Update(deltaTime);
 
 
         player.handleInput();
@@ -179,21 +193,25 @@ int main() {
         if (isCollidingWithMap(playerBounds, collisions)) {
             isDead = true;
         }
-        
-
-        //player draw
-        else if (isCollidingWithTrail(playerBounds,player.getVelocity(), trailMask)) {
+        else if (isCollidingWithTrail(playerBounds, player.getVelocity(), trailMask)) {
+            isDead = true;
+        }
+        else if (isCollidingWithTrail(playerBounds, player.getVelocity(), trailMask2)) {
             isDead = true;
         }
 
         if (isDead) {
-            
-            player = Player(100.f, 300.f, playerTexture);
 
-            
+            player = Player(100.f, 300.f, playerTexture);
+            //npc = Npc(100.f, 300.f, playerTexture);
+
+
             //player Draw
             trailTexture.clear(sf::Color::Transparent);
             trailMask.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
+
+            trailTexture2.clear(sf::Color::Transparent);
+            trailMask2.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
 
             
             continue;
@@ -218,7 +236,24 @@ int main() {
             }
         }
 
-       
+
+        trailBrush2.setSize({ 6, 6 });
+        trailBrush2.setPosition({ npc.GetPosition().x + 1, npc.GetPosition().y + 1 });
+        trailTexture2.draw(trailBrush2);
+        trailTexture2.display();
+        startX = (int)(npc.GetPosition().x + 1);
+        startY = (int)(npc.GetPosition().y + 1);
+        endX = startX + (int)(npc.getSize().x - 2);
+        endY = startY + (int)(npc.getSize().y - 2);
+        sf::Vector2u maskSize2 = trailMask2.getSize();
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                if (x >= 0 && x < (int)maskSize2.x && y >= 0 && y < (int)maskSize2.y) {
+
+                    trailMask2.setPixel({ (unsigned int)x, (unsigned int)y }, sf::Color::Red);
+                }
+            }
+        }
 
 
 
@@ -241,6 +276,7 @@ int main() {
 
         //player draw
         window.draw(trailDisplay);
+        window.draw(trailDisplay2);
 
 
 
