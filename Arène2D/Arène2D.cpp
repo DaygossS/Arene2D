@@ -86,7 +86,7 @@ bool isCollidingWithTrail(const sf::FloatRect& bounds, const sf::Vector2f& veloc
         unsigned int y = (unsigned int)point.y;
 
         if (x < maskSize.x && y < maskSize.y) {
-            if (mask.getPixel({ x, y }) == sf::Color::White) {
+            if (mask.getPixel({ x, y }) == sf::Color::White || mask.getPixel({ x, y }) == sf::Color::Red) {
                 return true;
             }
         }
@@ -191,7 +191,7 @@ int main() {
         if (isDead) {
 
             player = Player(100.f, 300.f, playerTexture);
-            //npc = Npc(100.f, 300.f, playerTexture);
+            //npc = Npc(1000.f, 500.f, playerTexture);
 
 
             //player Draw
@@ -205,39 +205,93 @@ int main() {
             continue;
         }
 
+
+
+        sf::FloatRect npcBounds(npc.GetPosition(), npc.getSize());
+        bool IAisDead = false;
+        if (isCollidingWithMap(npcBounds, collisions)) {
+            IAisDead = true;
+        }
+        else if (isCollidingWithTrail(npcBounds, npc.getVelocity(), trailMask)) {
+            IAisDead = true;
+        }
+        else if (isCollidingWithTrail(npcBounds, npc.getVelocity(), trailMask2)) {
+            IAisDead = true;
+        }
+
+        if (IAisDead) {
+
+            //player = Player(100.f, 300.f, playerTexture);
+            //npc = Npc(1000.f, 500.f, playerTexture);
+
+
+            //player Draw
+            trailTexture.clear(sf::Color::Transparent);
+            trailMask.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
+
+            trailTexture2.clear(sf::Color::Transparent);
+            trailMask2.resize({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }, sf::Color::Black);
+
+
+            continue;
+        }
+
+
         //player Draw
-        trailBrush.setSize({6, 6});
-        trailBrush.setPosition({ player.getPosition().x + 1, player.getPosition().y + 1 });
+        float trailW = playerBounds.size.x - 26.f;
+        float trailH = playerBounds.size.y - 26.f;
+        if (trailW < 2.f) trailW = 2.f;
+        if (trailH < 2.f) trailH = 2.f;
+
+        trailBrush.setSize({ trailW, trailH });
+        sf::Vector2f playerCenter = player.getPosition();
+        float brushX = playerCenter.x - (trailW / 2.f);
+        float brushY = playerCenter.y - (trailH / 2.f);
+        trailBrush.setPosition({ brushX, brushY });
+
         trailTexture.draw(trailBrush);
         trailTexture.display();
-        int startX = (int)(player.getPosition().x + 1);
-        int startY = (int)(player.getPosition().y + 1);
-        int endX = startX + (int)(player.getScale().x - 2);
-        int endY = startY + (int)(player.getScale().y - 2);
+
+        int startX = (int)brushX;
+        int startY = (int)brushY;
+        int endX = startX + (int)trailW;
+        int endY = startY + (int)trailH;
+
         sf::Vector2u maskSize = trailMask.getSize();
+
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (x >= 0 && x < (int)maskSize.x && y >= 0 && y < (int)maskSize.y) {
-                    
                     trailMask.setPixel({ (unsigned int)x, (unsigned int)y }, sf::Color::White);
                 }
             }
         }
 
+        //IA Draw
+        trailW = npcBounds.size.x - 26.f;
+        trailH = npcBounds.size.y - 26.f;
+        if (trailW < 2.f) trailW = 2.f;
+        if (trailH < 2.f) trailH = 2.f;
 
-        trailBrush2.setSize({ 6, 6 });
-        trailBrush2.setPosition({ npc.GetPosition().x + 1, npc.GetPosition().y + 1 });
+        trailBrush2.setSize({ trailW, trailH });
+        sf::Vector2f npcCenter = npc.GetPosition();
+        brushX = npcCenter.x - (trailW / 2.f);
+        brushY = npcCenter.y - (trailH / 2.f);
+        trailBrush2.setPosition({ brushX, brushY });
+
         trailTexture2.draw(trailBrush2);
         trailTexture2.display();
-        startX = (int)(npc.GetPosition().x + 1);
-        startY = (int)(npc.GetPosition().y + 1);
-        endX = startX + (int)(npc.getSize().x - 2);
-        endY = startY + (int)(npc.getSize().y - 2);
+
+        startX = (int)brushX;
+        startY = (int)brushY;
+        endX = startX + (int)trailW;
+        endY = startY + (int)trailH;
+
         sf::Vector2u maskSize2 = trailMask2.getSize();
+
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (x >= 0 && x < (int)maskSize2.x && y >= 0 && y < (int)maskSize2.y) {
-
                     trailMask2.setPixel({ (unsigned int)x, (unsigned int)y }, sf::Color::Red);
                 }
             }

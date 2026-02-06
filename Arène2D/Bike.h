@@ -79,6 +79,7 @@ public:
             m_velocity.y = 0.f;
         }
 
+        sprite.move(m_speed * m_velocity * deltaTime);
 
         sf::FloatRect IaBounds(GetPosition(), getSize());
         bool willdie = false;
@@ -93,11 +94,45 @@ public:
             willdie = true;
         }
 
-        if (willdie) {
-            std::cout << "i'm Dead" << std::endl;
+
+        int trie = 0;
+        while (willdie && trie <3) {
+            sprite.move(-m_speed * m_velocity * deltaTime);
+
+            if (m_velocity.y == 1.f) {
+                m_velocity.x = 1.f;
+                m_velocity.y = 0.f;
+            }
+            else if (m_velocity.x == 1.f) {
+                m_velocity.x = 0.f;
+                m_velocity.y = -1.f;
+            }
+            else if (m_velocity.y == -1.f) {
+                m_velocity.x = -1.f;
+                m_velocity.y = 0.f;
+            }
+            else if (m_velocity.x == -1.f) {
+                m_velocity.x = 0.f;
+                m_velocity.y = 1.f;
+            }
+            
+            sprite.move(m_speed * m_velocity * deltaTime);
+
+            if (IAisCollidingWithMap(IaBounds, collisions)) {
+                willdie = true;
+            }
+            else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask)) {
+                willdie = true;
+            }
+            else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask2)) {
+                willdie = true;
+            }
+            else { willdie = false; }
+
+            trie++;
         }
 
-        sprite.move(m_speed * m_velocity * deltaTime);
+        
     }
 };
 

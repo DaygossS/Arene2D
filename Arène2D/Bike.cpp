@@ -64,7 +64,7 @@ bool IAisCollidingWithTrail(const sf::FloatRect& bounds, const sf::Vector2f& vel
         unsigned int y = (unsigned int)point.y;
 
         if (x < maskSize.x && y < maskSize.y) {
-            if (mask.getPixel({ x, y }) == sf::Color::White) {
+            if (mask.getPixel({ x, y }) == sf::Color::White || mask.getPixel({ x, y }) == sf::Color::Red) {
                 return true;
             }
         }
