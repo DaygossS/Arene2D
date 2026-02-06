@@ -60,38 +60,26 @@ bool isCollidingWithMap(const sf::FloatRect& bounds, const std::vector<int>& col
 
 bool isCollidingWithTrail(const sf::FloatRect& bounds, const sf::Vector2f& velocity, const sf::Image& mask) {
 
-    
     float margin = 2.f;
-
-    
     std::vector<sf::Vector2f> checkPoints;
 
-    
     if (velocity.x > 0) {
-        
         checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + margin });
         checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y - margin });
     }
-    
     else if (velocity.x < 0) {
-        
         checkPoints.push_back({ bounds.position.x, bounds.position.y + margin });
         checkPoints.push_back({ bounds.position.x, bounds.position.y + bounds.size.y - margin });
     }
-    
     else if (velocity.y > 0) {
-        
         checkPoints.push_back({ bounds.position.x + margin, bounds.position.y + bounds.size.y });
         checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y + bounds.size.y });
     }
-    
     else if (velocity.y < 0) {
-        
         checkPoints.push_back({ bounds.position.x + margin, bounds.position.y });
         checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y });
     }
 
-    
     sf::Vector2u maskSize = mask.getSize();
     for (const auto& point : checkPoints) {
         unsigned int x = (unsigned int)point.x;
