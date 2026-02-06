@@ -164,8 +164,8 @@ int main() {
             continue;
         }
 
-        float trailW = playerBounds.size.x - 26.f;
-        float trailH = playerBounds.size.y - 26.f;
+        float trailW = playerBounds.size.x - 10.f;
+        float trailH = playerBounds.size.y - 10.f;
         if (trailW < 2.f) trailW = 2.f;
         if (trailH < 2.f) trailH = 2.f;
 
