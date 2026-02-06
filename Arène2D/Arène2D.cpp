@@ -142,7 +142,7 @@ int main() {
     std::vector<int> map(MAP_WIDTH * MAP_HEIGHT, 0);
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
     
-    openMap(map, collisions, "niveau2.txt");
+    openMap(map, collisions, "niveauhi.txt");
 
     
     Player player(100.f, 300.f, playerTexture);
