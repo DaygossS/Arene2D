@@ -16,9 +16,9 @@ public:
     
     int targetia = 0;
     // Input
-    sf::Vector2f GetPosition(auto player) {
-        return player.Getposition();
-    }
+    //sf::Vector2f GetPosition(auto player) {
+        //return player.Getposition();
+    //}
 
     //Player GetPlayer(){ donc pas besoin?
     //  return Player player

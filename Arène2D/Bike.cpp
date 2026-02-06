@@ -1,8 +1,24 @@
 #include "Bike.h"
 
 void Npc::draw(sf::RenderWindow& window) {
-	window.draw(m_shape);
+	window.draw(sprite);
 }
+
+Npc::Npc(float startX, float startY, const sf::Texture& texture) : sprite(texture) {
+
+	sf::FloatRect bounds = sprite.getLocalBounds();
+	float originX = bounds.size.x / 2.f;
+	float originY = bounds.size.y / 2.f;
+	sprite.setTexture(texture);
+	sprite.setOrigin({ originX, originY });
+	sprite.setScale({ 0.5f, 0.5f });
+	sprite.setPosition({ startX, startY });
+	m_speed = 150.f;
+	m_velocity = { 0.f, 0.f };
+}
+
+
+
 //#include "Player.hpp"
 //
 //Player::Player(float startX, float startY) {
