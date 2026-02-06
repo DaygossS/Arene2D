@@ -21,6 +21,11 @@ private:
     sf::Vector2f pos = {800.f,0.f};
     sf::Sprite sprite;
     float m_speed;
+
+    float act1 = 0;
+    float act2 = 0;
+    float act3 = 0;
+
 public:
     int value = 100;
 
@@ -61,24 +66,38 @@ public:
     {
         fsm.Update(context);
 
+        //boucle: 1324 bghd
+
         int choice = rand() % 30;
-        if (choice==1 && (m_velocity.y != 1.f)) {
+        if (choice==1 && (m_velocity.y != 1.f) && !((act1 == 4 && act2 == 2 && act3 == 3) || (act1 == 3 && act2 == 2 && act3 == 4))) {
             m_velocity.y = -1.f;
             m_velocity.x = 0.f;
+            act3 = act2;
+            act2 = act1;
+            act1 = choice;
         }
-        else if (choice == 2 && (m_velocity.y != -1.f)) {
+        else if (choice == 2 && (m_velocity.y != -1.f) && !((act1 == 4 && act2 == 1 && act3 == 3) || (act1 == 3 && act2 == 1 && act3 == 4))) {
             m_velocity.y = 1.f;
             m_velocity.x = 0.f;
+            act3 = act2;
+            act2 = act1;
+            act1 = choice;
         }
-        else if (choice == 3 && (m_velocity.x != 1.f)) {
+        else if (choice == 3 && (m_velocity.x != 1.f) && !((act1 == 2 && act2 == 4 && act3 == 1) || (act1 == 1 && act2 == 4 && act3 == 2))) {
             m_velocity.x = -1.f;
             m_velocity.y = 0.f;
+            act3 = act2;
+            act2 = act1;
+            act1 = choice;
         }
-        else if (choice == 4 && (m_velocity.x != -1.f)) {
+        else if (choice == 4 && (m_velocity.x != -1.f) && !((act1 == 2 && act2 == 3 && act3 == 1) || (act1 == 1 && act2 == 3 && act3 == 2))) {
             m_velocity.x = 1.f;
             m_velocity.y = 0.f;
+            act3 = act2;
+            act2 = act1;
+            act1 = choice;
         }
-
+        
         sprite.move(m_speed * m_velocity * deltaTime);
 
         sf::FloatRect IaBounds(GetPosition(), getSize());
