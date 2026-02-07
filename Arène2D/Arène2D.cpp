@@ -4,47 +4,39 @@
 #include <iostream>
 #include "WorldAssets.hpp"
 #include "Player.hpp"
-#include "TrailSystem.hpp" // On inclut notre nouvelle classe
+#include "TrailSystem.hpp"
+#include "CollisionManager.hpp" // <--- Indispensable maintenant
 
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
 const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 
-// Fonction utilitaire map (inchangée)
+// La fonction de chargement de map reste ici (c'est du chargement de données, pas de la physique)
 void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) return;
-    int val; std::string tempStr; size_t count = 0;
-    while (count < mapData.size() && file >> val) { mapData[count++] = val; }
-    file.clear(); file >> tempStr; count = 0;
-    while (count < colData.size() && file >> val) { colData[count++] = val; }
-}
-
-// Fonction collision map (inchangée)
-bool isCollidingWithMap(const sf::FloatRect& bounds, const std::vector<int>& collisions) {
-    sf::Vector2f points[4] = {
-        { bounds.position.x, bounds.position.y },
-        { bounds.position.x + bounds.size.x, bounds.position.y },
-        { bounds.position.x, bounds.position.y + bounds.size.y },
-        { bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y }
-    };
-    for (int i = 0; i < 4; i++) {
-        int gridX = (int)(points[i].x / TILE_SIZE);
-        int gridY = (int)(points[i].y / TILE_SIZE);
-        if (gridX >= 0 && gridX < MAP_WIDTH && gridY >= 0 && gridY < MAP_HEIGHT) {
-            if (collisions[gridY * MAP_WIDTH + gridX] == 1) return true;
-        }
-        else { return true; }
+    int val;
+    std::string tempStr;
+    size_t count = 0;
+    while (count < mapData.size() && file >> val) {
+        mapData[count] = val;
+        count++;
     }
-    return false;
+    file.clear();
+    file >> tempStr;
+    count = 0;
+    while (count < colData.size() && file >> val) {
+        colData[count] = val;
+        count++;
+    }
 }
 
 int main() {
     sf::RenderWindow window(sf::VideoMode({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }), "TRON GAME");
     window.setFramerateLimit(60);
 
-    // --- Assets ---
+    // --- 1. ASSETS ---
     sf::Texture tileset = createTronTexture(TILE_SIZE, TEXTURE_COLS);
     sf::Sprite mapSprite(tileset);
 
@@ -53,17 +45,17 @@ int main() {
     if (!playerS.loadFromFile("../Assets/Player/playerS.png")) std::cerr << "Erreur S" << std::endl;
     if (!playerQ.loadFromFile("../Assets/Player/playerQ.png")) std::cerr << "Erreur Q" << std::endl;
     if (!playerD.loadFromFile("../Assets/Player/playerD.png")) std::cerr << "Erreur D" << std::endl;
+
     PlayerTextures playerAssets = { playerZ, playerS, playerQ, playerD };
 
-    // --- Initialisation du Monde ---
+    // --- 2. MAP & ENTITÉS ---
     std::vector<int> map(MAP_WIDTH * MAP_HEIGHT, 0);
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
-    openMap(map, collisions, "niveau2.txt");
+    openMap(map, collisions, "niveau3.txt");
 
-    // --- Initialisation des Objets ---
     Player player(100.f, 300.f, playerAssets);
 
-    // NOUVEAU : On crée le système de traînée ici (largeur, hauteur, taille_tuile, épaisseur)
+    // Système de traînée
     TrailSystem trailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
 
     sf::Clock clock;
@@ -89,52 +81,59 @@ int main() {
         player.handleInput();
         player.update(deltaTime);
 
-        // Hitbox calculée
-        float hitboxSize = 20.f;
-        sf::Vector2f pPos = player.getPosition();
-        sf::FloatRect playerBounds({ pPos.x - hitboxSize / 2.f, pPos.y - hitboxSize / 2.f }, { hitboxSize, hitboxSize });
+        // --- 3. PHYSIQUE VIA COLLISION MANAGER ---
+
+        // A. On demande la Hitbox au Manager (Taille 20px)
+        sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 20.f);
 
         bool isDead = false;
 
-        // 1. Collision Mur Map
-        if (isCollidingWithMap(playerBounds, collisions)) {
+        // B. On vérifie les murs via le Manager
+        // (On lui passe la map, ses dimensions et la taille des tuiles)
+        if (CollisionManager::checkMapCollision(playerBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) {
             isDead = true;
+            std::cout << "Mort: Mur Map" << std::endl;
         }
-        // 2. Collision Traînée (via notre nouvelle classe)
+        // C. On vérifie la lumière via le TrailSystem
         else if (trailSystem.checkCollision(playerBounds, player.getVelocity())) {
             isDead = true;
+            std::cout << "Mort: Trainee" << std::endl;
         }
 
         if (isDead) {
             player.reset(100.f, 300.f);
-            trailSystem.reset(); 
+            trailSystem.reset();
             continue;
         }
 
-        
+        // --- 4. LOGIQUE JEU ---
+
+        // Ajout de la traînée (Couleur Cyan)
         trailSystem.addTrail(player.getPosition(), sf::Color::White);
 
-        // --- Rendu ---
+        // --- 5. RENDU ---
         window.clear(sf::Color::Black);
 
-        // 1. Sol
+        // A. Map
         for (int y = 0; y < MAP_HEIGHT; ++y) {
             for (int x = 0; x < MAP_WIDTH; ++x) {
                 int index = y * MAP_WIDTH + x;
                 int tID = map[index];
                 if (tID >= TEXTURE_COLS) tID = 0;
+
                 mapSprite.setPosition({ (float)(x * TILE_SIZE), (float)(y * TILE_SIZE) });
                 mapSprite.setTextureRect(sf::IntRect({ tID * TILE_SIZE, 0 }, { TILE_SIZE, TILE_SIZE }));
                 window.draw(mapSprite);
             }
         }
 
-        // 2. Traînées (toutes)
+        // B. Traînées
         trailSystem.draw(window);
 
-        // 3. Joueur
+        // C. Joueur
         player.draw(window);
 
+        // D. Debug
         if (showHitbox) {
             debugBox.setSize(playerBounds.size);
             debugBox.setPosition(playerBounds.position);
