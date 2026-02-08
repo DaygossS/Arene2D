@@ -10,4 +10,5 @@ namespace CollisionManager {
     // 2. Vérifie si la hitbox touche un mur (on passe les infos de la map en arguments)
     bool checkMapCollision(const sf::FloatRect& bounds, const std::vector<int>& collisions, int mapWidth, int mapHeight, int tileSize);
 
+    void drawHitbox(sf::RenderWindow& window, const sf::FloatRect& bounds, sf::Color color = sf::Color::Red);
 }

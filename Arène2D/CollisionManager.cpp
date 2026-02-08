@@ -3,7 +3,6 @@
 namespace CollisionManager {
 
     sf::FloatRect getHitbox(const sf::Vector2f& position, float size) {
-        // SFML 3 : Constructeur {position}, {taille}
         return sf::FloatRect(
             { position.x - size / 2.f, position.y - size / 2.f },
             { size, size }
@@ -22,17 +21,23 @@ namespace CollisionManager {
             int gridX = (int)(points[i].x / tileSize);
             int gridY = (int)(points[i].y / tileSize);
 
-            // Vérification limites de la map
             if (gridX >= 0 && gridX < mapWidth && gridY >= 0 && gridY < mapHeight) {
                 int index = gridY * mapWidth + gridX;
-                // Si la case vaut 1, c'est un mur
                 if (collisions[index] == 1) return true;
             }
-            else {
-                // Hors map = Collision
-                return true;
-            }
+            else { return true; }
         }
         return false;
+    }
+
+    // NOUVEAU : L'implémentation du dessin
+    void drawHitbox(sf::RenderWindow& window, const sf::FloatRect& bounds, sf::Color color) {
+        sf::RectangleShape debugShape;
+        debugShape.setPosition(bounds.position);
+        debugShape.setSize(bounds.size);
+        debugShape.setFillColor(sf::Color::Transparent); // Intérieur vide
+        debugShape.setOutlineColor(color);               // Bordure colorée
+        debugShape.setOutlineThickness(1.f);
+        window.draw(debugShape);
     }
 }

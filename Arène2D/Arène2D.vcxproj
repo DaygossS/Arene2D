@@ -131,12 +131,14 @@
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="MainCreateurLevel.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ScoreSystem.cpp" />
     <ClCompile Include="TrailSystem.cpp" />
     <ClCompile Include="WorldAssets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="ScoreSystem.hpp" />
     <ClInclude Include="TrailSystem.hpp" />
     <ClInclude Include="WorldAssets.hpp" />
   </ItemGroup>
