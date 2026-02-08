@@ -130,6 +130,8 @@
     <ClCompile Include="Arène2D.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="MainCreateurLevel.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="OptionsMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ScoreSystem.cpp" />
     <ClCompile Include="TrailSystem.cpp" />
@@ -137,6 +139,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.hpp" />
+    <ClInclude Include="MainMenu.hpp" />
+    <ClInclude Include="OptionsMenu.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="ScoreSystem.hpp" />
     <ClInclude Include="TrailSystem.hpp" />
