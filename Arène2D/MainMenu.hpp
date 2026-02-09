@@ -1,29 +1,51 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "OptionsMenu.hpp" // <--- On l'inclut ici, plus dans le main
+#include <string>
+#include "OptionsMenu.hpp"
+
+enum MenuState {
+    STATE_MAIN,
+    STATE_LEVELS,
+    STATE_OPTIONS
+};
 
 class MainMenu {
 public:
     MainMenu(float width, float height);
-
     bool init(const std::string& fontPath);
-
+    void update(float deltaTime);
     void draw(sf::RenderWindow& window);
-
-    // Retourne : 0 = Reste dans le menu, 1 = Jouer, 3 = Quitter
-    // Note : Le return 2 (Options) disparaît car c'est géré en interne !
     int handleInput(sf::RenderWindow& window, const sf::Event& event);
 
+    std::string getSelectedLevelFile() const;
+
 private:
-    sf::Font m_font;
-    std::vector<sf::Text> m_options;
-    int m_selectedItemIndex = -1;
-
-    // --- NOUVEAU ---
-    OptionsMenu m_optionsMenu; // L'instance du menu options est DANS le menu principal
-    bool m_showOptions;        // Est-ce qu'on affiche les options ?
-
-    float m_width;  // On garde la taille pour l'init des options
+    float m_width;
     float m_height;
+    MenuState m_state;
+
+    sf::Font m_font;
+
+    // Boutons Menu Principal
+    std::vector<sf::Text> m_mainOptions;
+
+    // Boutons Niveaux
+    std::vector<sf::Text> m_levelOptions;
+    std::string m_selectedLevelFile;
+
+    int m_selectedItemIndex;
+
+    OptionsMenu m_optionsMenu;
+
+    // Décors
+    sf::Texture m_gridTexture;
+    sf::Sprite m_gridSprite;
+
+    // Animation Voiture
+    sf::Texture m_carTexture;
+    sf::Sprite m_carSprite;
+    sf::IntRect m_carRect;
+    float m_animationTimer;
+    int m_currentFrame;
 };
