@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Arène2D.cpp" />
+    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="GameOverMenu.cpp" />
     <ClCompile Include="MainCreateurLevel.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="WorldAssets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioSystem.hpp" />
     <ClInclude Include="CollisionManager.hpp" />
     <ClInclude Include="GameOverMenu.hpp" />
     <ClInclude Include="MainMenu.hpp" />
