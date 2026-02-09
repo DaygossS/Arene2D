@@ -10,6 +10,7 @@
 #include "MainMenu.hpp"
 #include "OptionsMenu.hpp"
 #include "PauseMenu.hpp"
+#include "GameOverMenu.hpp" 
 
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
@@ -17,7 +18,7 @@ const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 const int HUD_HEIGHT = 60;
 
-enum GameState { MENU, GAME, PAUSE, OPTIONS };
+enum GameState { MENU, GAME, PAUSE, OPTIONS, GAME_OVER };
 
 static void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
     std::ifstream file(filename);
@@ -61,20 +62,25 @@ int main() {
 
     Player player(100.f, 300.f, playerAssets);
     TrailSystem trailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
+
     ScoreSystem scoreSystem;
-    if (!scoreSystem.init("../Assets/font.ttf")) std::cout << "Erreur police score" << std::endl;
+    if (!scoreSystem.init("../Assets/Fonts/arial.ttf")) std::cout << "Erreur police score" << std::endl;
 
     MainMenu mainMenu((float)totalWidth, (float)totalHeight);
-    if (!mainMenu.init("../Assets/font.ttf")) std::cout << "Erreur police menu" << std::endl;
+    if (!mainMenu.init("../Assets/Fonts/arial.ttf")) std::cout << "Erreur police menu" << std::endl;
 
     PauseMenu pauseMenu((float)totalWidth, (float)totalHeight);
-    if (!pauseMenu.init("../Assets/font.ttf")) std::cout << "Erreur police pause" << std::endl;
+    if (!pauseMenu.init("../Assets/Fonts/arial.ttf")) std::cout << "Erreur police pause" << std::endl;
+
+    GameOverMenu gameOverMenu;
+    if (!gameOverMenu.init("../Assets/Fonts/arial.ttf", (float)totalWidth, (float)totalHeight)) std::cout << "Erreur police gameover" << std::endl;
 
     sf::RectangleShape hudBackground({ (float)totalWidth, (float)HUD_HEIGHT });
     hudBackground.setFillColor(sf::Color(30, 30, 30));
 
     sf::Clock clock;
     bool showHitbox = false;
+    bool hasGameStarted = false;
 
     GameState currentState = MENU;
 
@@ -90,14 +96,16 @@ int main() {
                     std::string levelFile = mainMenu.getSelectedLevelFile();
                     openMap(map, collisions, levelFile);
                     currentState = GAME;
+                    hasGameStarted = false;
+                    player.reset(100.f, 300.f);
+                    trailSystem.reset();
+                    scoreSystem.reset();
                 }
                 if (action == 3) window.close();
             }
             else if (currentState == GAME) {
                 if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
-                    if (key->scancode == sf::Keyboard::Scancode::Escape) {
-                        currentState = PAUSE;
-                    }
+                    if (key->scancode == sf::Keyboard::Scancode::Escape) currentState = PAUSE;
                     if (key->scancode == sf::Keyboard::Scancode::K) scoreSystem.addKill();
                     if (key->scancode == sf::Keyboard::Scancode::F1) showHitbox = !showHitbox;
                 }
@@ -105,7 +113,24 @@ int main() {
             else if (currentState == PAUSE) {
                 int action = pauseMenu.handleInput(window, *event);
                 if (action == 1) currentState = GAME;
-                if (action == 2) currentState = MENU;
+                if (action == 2) {
+                    currentState = MENU;
+                    hasGameStarted = false;
+                }
+            }
+            else if (currentState == GAME_OVER) {
+                GameOverAction action = gameOverMenu.handleEvent(*event, window);
+                if (action == GameOverAction::Restart) {
+                    player.reset(100.f, 300.f);
+                    trailSystem.reset();
+                    scoreSystem.reset();
+                    hasGameStarted = false;
+                    currentState = GAME;
+                }
+                else if (action == GameOverAction::BackToMenu) {
+                    currentState = MENU;
+                    hasGameStarted = false;
+                }
             }
         }
 
@@ -115,7 +140,16 @@ int main() {
         else if (currentState == GAME) {
             player.handleInput();
             player.update(deltaTime);
-            scoreSystem.update(deltaTime);
+
+            if (!hasGameStarted) {
+                if (player.getVelocity().x != 0 || player.getVelocity().y != 0) {
+                    hasGameStarted = true;
+                }
+            }
+
+            if (hasGameStarted) {
+                scoreSystem.update(deltaTime);
+            }
 
             sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 20.f);
             bool isDead = false;
@@ -124,9 +158,8 @@ int main() {
             else if (trailSystem.checkCollision(playerBounds, player.getVelocity())) isDead = true;
 
             if (isDead) {
-                player.reset(100.f, 300.f);
-                trailSystem.reset();
-                scoreSystem.reset();
+                currentState = GAME_OVER;
+                gameOverMenu.setState(false, scoreSystem.getScore());
             }
 
             trailSystem.addTrail(player.getPosition(), sf::Color::White);
@@ -141,8 +174,7 @@ int main() {
             window.setView(window.getDefaultView());
             mainMenu.draw(window);
         }
-        else if (currentState == GAME || currentState == PAUSE) {
-
+        else if (currentState == GAME || currentState == PAUSE || currentState == GAME_OVER) {
             window.setView(hudView);
             window.draw(hudBackground);
             scoreSystem.draw(window);
@@ -169,6 +201,11 @@ int main() {
             if (currentState == PAUSE) {
                 window.setView(window.getDefaultView());
                 pauseMenu.draw(window);
+            }
+
+            if (currentState == GAME_OVER) {
+                window.setView(window.getDefaultView());
+                gameOverMenu.draw(window);
             }
         }
 

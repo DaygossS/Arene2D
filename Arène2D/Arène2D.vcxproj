@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Arène2D.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="GameOverMenu.cpp" />
     <ClCompile Include="MainCreateurLevel.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="OptionsMenu.cpp" />
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.hpp" />
+    <ClInclude Include="GameOverMenu.hpp" />
     <ClInclude Include="MainMenu.hpp" />
     <ClInclude Include="OptionsMenu.hpp" />
     <ClInclude Include="PauseMenu.hpp" />

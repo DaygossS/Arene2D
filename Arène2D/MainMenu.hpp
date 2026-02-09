@@ -33,6 +33,7 @@ private:
     // Boutons Niveaux
     std::vector<sf::Text> m_levelOptions;
     std::string m_selectedLevelFile;
+    sf::Text m_returnButton;
 
     int m_selectedItemIndex;
 
