@@ -120,11 +120,11 @@ int main() {
             // --- LOGIQUE DU JEU ---
             player.handleInput();
             player.update(deltaTime);
-            npc.update(deltaTime,collisions,trailSystem,trailSystem2);
+            npc.update(deltaTime, collisions, trailSystem, trailSystem2);
             scoreSystem.update(deltaTime);
 
             sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
-            sf::FloatRect npcBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
+            sf::FloatRect npcBounds = CollisionManager::getHitbox(npc.getPosition(), 8.f);
 
             bool isDead = false;
 
@@ -140,7 +140,7 @@ int main() {
                 scoreSystem.reset();
                 // Optionnel : currentState = MENU; // Si tu veux retourner au menu quand tu meurs
             }
-            
+
             bool iaDead = false;
 
             if (CollisionManager::checkMapCollision(npcBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
