@@ -19,6 +19,8 @@ const int HUD_HEIGHT = 60;
 // Énumération pour gérer l'état du jeu
 enum GameState { MENU, GAME, OPTIONS };
 
+#include "Bike.cpp"
+
 void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) return;
@@ -44,7 +46,62 @@ int main() {
 
     sf::View hudView = window.getDefaultView();
 
-    // --- ASSETS ---
+
+
+bool isCollidingWithTrail(const sf::FloatRect& bounds, const sf::Vector2f& velocity, const sf::Image& mask) {
+
+    
+    float margin = 2.f;
+
+    
+    std::vector<sf::Vector2f> checkPoints;
+
+    
+    if (velocity.x > 0) {
+        
+        checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + margin });
+        checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y - margin });
+    }
+    
+    else if (velocity.x < 0) {
+        
+        checkPoints.push_back({ bounds.position.x, bounds.position.y + margin });
+        checkPoints.push_back({ bounds.position.x, bounds.position.y + bounds.size.y - margin });
+    }
+    
+    else if (velocity.y > 0) {
+        
+        checkPoints.push_back({ bounds.position.x + margin, bounds.position.y + bounds.size.y });
+        checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y + bounds.size.y });
+    }
+    
+    else if (velocity.y < 0) {
+        
+        checkPoints.push_back({ bounds.position.x + margin, bounds.position.y });
+        checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y });
+    }
+
+    
+    sf::Vector2u maskSize = mask.getSize();
+    for (const auto& point : checkPoints) {
+        unsigned int x = (unsigned int)point.x;
+        unsigned int y = (unsigned int)point.y;
+
+        if (x < maskSize.x && y < maskSize.y) {
+            if (mask.getPixel({ x, y }) == sf::Color::White) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+int main() {
+    sf::RenderWindow window(sf::VideoMode({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }), "TRON GAME");
+    window.setFramerateLimit(60);
+
+    
     sf::Texture tileset = createTronTexture(TILE_SIZE, TEXTURE_COLS);
     sf::Sprite mapSprite(tileset);
 
