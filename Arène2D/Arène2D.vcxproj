@@ -132,6 +132,7 @@
     <ClCompile Include="MainCreateurLevel.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="OptionsMenu.cpp" />
+    <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ScoreSystem.cpp" />
     <ClCompile Include="TrailSystem.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="CollisionManager.hpp" />
     <ClInclude Include="MainMenu.hpp" />
     <ClInclude Include="OptionsMenu.hpp" />
+    <ClInclude Include="PauseMenu.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="ScoreSystem.hpp" />
     <ClInclude Include="TrailSystem.hpp" />

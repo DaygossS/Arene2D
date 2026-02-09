@@ -9,6 +9,7 @@
 #include "ScoreSystem.hpp"
 #include "MainMenu.hpp"
 #include "OptionsMenu.hpp"
+#include "PauseMenu.hpp"
 
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
@@ -16,7 +17,7 @@ const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 const int HUD_HEIGHT = 60;
 
-enum GameState { MENU, GAME, OPTIONS };
+enum GameState { MENU, GAME, PAUSE, OPTIONS };
 
 static void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
     std::ifstream file(filename);
@@ -66,6 +67,9 @@ int main() {
     MainMenu mainMenu((float)totalWidth, (float)totalHeight);
     if (!mainMenu.init("../Assets/font.ttf")) std::cout << "Erreur police menu" << std::endl;
 
+    PauseMenu pauseMenu((float)totalWidth, (float)totalHeight);
+    if (!pauseMenu.init("../Assets/font.ttf")) std::cout << "Erreur police pause" << std::endl;
+
     sf::RectangleShape hudBackground({ (float)totalWidth, (float)HUD_HEIGHT });
     hudBackground.setFillColor(sf::Color(30, 30, 30));
 
@@ -82,7 +86,6 @@ int main() {
 
             if (currentState == MENU) {
                 int action = mainMenu.handleInput(window, *event);
-
                 if (action == 1) {
                     std::string levelFile = mainMenu.getSelectedLevelFile();
                     openMap(map, collisions, levelFile);
@@ -92,10 +95,17 @@ int main() {
             }
             else if (currentState == GAME) {
                 if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
-                    if (key->scancode == sf::Keyboard::Scancode::Escape) currentState = MENU;
+                    if (key->scancode == sf::Keyboard::Scancode::Escape) {
+                        currentState = PAUSE;
+                    }
                     if (key->scancode == sf::Keyboard::Scancode::K) scoreSystem.addKill();
                     if (key->scancode == sf::Keyboard::Scancode::F1) showHitbox = !showHitbox;
                 }
+            }
+            else if (currentState == PAUSE) {
+                int action = pauseMenu.handleInput(window, *event);
+                if (action == 1) currentState = GAME;
+                if (action == 2) currentState = MENU;
             }
         }
 
@@ -121,6 +131,9 @@ int main() {
 
             trailSystem.addTrail(player.getPosition(), sf::Color::White);
         }
+        else if (currentState == PAUSE) {
+            pauseMenu.update();
+        }
 
         window.clear(sf::Color::Black);
 
@@ -128,7 +141,8 @@ int main() {
             window.setView(window.getDefaultView());
             mainMenu.draw(window);
         }
-        else if (currentState == GAME) {
+        else if (currentState == GAME || currentState == PAUSE) {
+
             window.setView(hudView);
             window.draw(hudBackground);
             scoreSystem.draw(window);
@@ -147,9 +161,14 @@ int main() {
             trailSystem.draw(window);
             player.draw(window);
 
-            if (showHitbox) {
+            if (currentState == GAME && showHitbox) {
                 sf::FloatRect currentBounds = CollisionManager::getHitbox(player.getPosition(), 20.f);
                 CollisionManager::drawHitbox(window, currentBounds, sf::Color::Red);
+            }
+
+            if (currentState == PAUSE) {
+                window.setView(window.getDefaultView());
+                pauseMenu.draw(window);
             }
         }
 
