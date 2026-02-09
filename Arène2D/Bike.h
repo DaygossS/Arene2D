@@ -22,9 +22,9 @@ private:
     sf::Sprite sprite;
     float m_speed;
 
-    float act1 = 0;
-    float act2 = 0;
-    float act3 = 0;
+    int act1 = 0;
+    int act2 = 0;
+    int act3 = 0;
 
 public:
     int value = 100;
@@ -35,7 +35,7 @@ public:
     PlayerTextures textures;
     Context context{};
 
-    sf::Vector2f GetPosition() {
+    sf::Vector2f getPosition() {
         return sprite.getPosition();
     }
     sf::Vector2f getSize() const { return sprite.getScale(); }
@@ -63,35 +63,36 @@ public:
         fsm.Init(roamState, context);
     }
 
-    void Update(float deltaTime, std::vector<int> collisions, sf::Image trailMask,sf::Image trailMask2)
+    void update(float deltaTime, std::vector<int> collisions, TrailSystem &trailMask, TrailSystem &trailMask2)
     {
         fsm.Update(context);
 
         //boucle: 1324 bghd
 
-        int choice = rand() % 90;
-        if (choice==1 && (m_velocity.y == 0.f) && !((act1 == 4 && act2 == 2 && act3 == 3) || (act1 == 3 && act2 == 2 && act3 == 4))) {
+        int choice = rand() % 10;
+        std::cout << choice << std::endl;
+        if (choice==1 && (m_velocity.y != 1.f) && !((act1 == 4 && act2 == 2 && act3 == 3) || (act1 == 3 && act2 == 2 && act3 == 4))) {
             m_velocity.y = -1.f;
             m_velocity.x = 0.f;
             act3 = act2;
             act2 = act1;
             act1 = choice;
         }
-        else if (choice == 2 && (m_velocity.y == 0.f) && !((act1 == 4 && act2 == 1 && act3 == 3) || (act1 == 3 && act2 == 1 && act3 == 4))) {
+        else if (choice == 2 && (m_velocity.y != -1.f) && !((act1 == 4 && act2 == 1 && act3 == 3) || (act1 == 3 && act2 == 1 && act3 == 4))) {
             m_velocity.y = 1.f;
             m_velocity.x = 0.f;
             act3 = act2;
             act2 = act1;
             act1 = choice;
         }
-        else if (choice == 3 && (m_velocity.x == 0.f) && !((act1 == 2 && act2 == 4 && act3 == 1) || (act1 == 1 && act2 == 4 && act3 == 2))) {
+        else if (choice == 3 && (m_velocity.x != 1.f) && !((act1 == 2 && act2 == 4 && act3 == 1) || (act1 == 1 && act2 == 4 && act3 == 2))) {
             m_velocity.x = -1.f;
             m_velocity.y = 0.f;
             act3 = act2;
             act2 = act1;
             act1 = choice;
         }
-        else if (choice == 4 && (m_velocity.x == 0.f) && !((act1 == 2 && act2 == 3 && act3 == 1) || (act1 == 1 && act2 == 3 && act3 == 2))) {
+        else if (choice == 4 && (m_velocity.x != -1.f) && !((act1 == 2 && act2 == 3 && act3 == 1) || (act1 == 1 && act2 == 3 && act3 == 2))) {
             m_velocity.x = 1.f;
             m_velocity.y = 0.f;
             act3 = act2;
@@ -101,16 +102,16 @@ public:
         
         sprite.move(m_speed * m_velocity * deltaTime);
 
-        sf::FloatRect IaBounds(GetPosition(), getSize());
+        sf::FloatRect IaBounds(getPosition(), getSize());
         bool willdie = false;
         
         if (IAisCollidingWithMap(IaBounds, collisions)) {
             willdie = true;
         }
-        else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask)) {
+        else if (trailMask.checkCollision(IaBounds, m_velocity)) {
             willdie = true;
         }
-        else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask2)) {
+        else if (trailMask2.checkCollision(IaBounds, m_velocity)) {
             willdie = true;
         }
 
@@ -142,10 +143,10 @@ public:
             if (IAisCollidingWithMap(IaBounds, collisions)) {
                 willdie = true;
             }
-            else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask)) {
+            else if (trailMask.checkCollision(IaBounds, m_velocity)) {
                 willdie = true;
             }
-            else if (IAisCollidingWithTrail(IaBounds, m_velocity, trailMask2)) {
+            else if (trailMask2.checkCollision(IaBounds, m_velocity)) {
                 willdie = true;
             }
             else { willdie = false; }

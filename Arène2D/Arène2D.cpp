@@ -63,6 +63,7 @@ int main() {
     // --- OBJETS JEU ---
     Player player(100.f, 300.f, playerAssets);
     Npc npc(1000.f, 500.f, playerAssets);
+    npc.Init();
     TrailSystem trailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
     TrailSystem trailSystem2(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
 
@@ -119,6 +120,7 @@ int main() {
             // --- LOGIQUE DU JEU ---
             player.handleInput();
             player.update(deltaTime);
+            npc.update(deltaTime,collisions,trailSystem,trailSystem2);
             scoreSystem.update(deltaTime);
 
             sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 20.f);
@@ -126,6 +128,7 @@ int main() {
 
             if (CollisionManager::checkMapCollision(playerBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) isDead = true;
             else if (trailSystem.checkCollision(playerBounds, player.getVelocity())) isDead = true;
+            else if (trailSystem2.checkCollision(playerBounds, player.getVelocity())) isDead = true;
 
             if (isDead) {
                 player.reset(100.f, 300.f);
@@ -137,6 +140,7 @@ int main() {
             }
 
             trailSystem.addTrail(player.getPosition(), sf::Color::White);
+            trailSystem2.addTrail(npc.getPosition(), sf::Color::Red);
 
             // --- AFFICHAGE DU JEU ---
 

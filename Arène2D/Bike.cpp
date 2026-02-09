@@ -24,53 +24,6 @@ bool IAisCollidingWithMap(const sf::FloatRect& bounds, const std::vector<int>& c
 
 
 
-bool IAisCollidingWithTrail(const sf::FloatRect& bounds, const sf::Vector2f& velocity, const sf::Image& mask) {
-
-
-    float margin = 2.f;
-
-
-    std::vector<sf::Vector2f> checkPoints;
-
-
-    if (velocity.x > 0) {
-
-        checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + margin });
-        checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y - margin });
-    }
-
-    else if (velocity.x < 0) {
-
-        checkPoints.push_back({ bounds.position.x, bounds.position.y + margin });
-        checkPoints.push_back({ bounds.position.x, bounds.position.y + bounds.size.y - margin });
-    }
-
-    else if (velocity.y > 0) {
-
-        checkPoints.push_back({ bounds.position.x + margin, bounds.position.y + bounds.size.y });
-        checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y + bounds.size.y });
-    }
-
-    else if (velocity.y < 0) {
-
-        checkPoints.push_back({ bounds.position.x + margin, bounds.position.y });
-        checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y });
-    }
-
-
-    sf::Vector2u maskSize = mask.getSize();
-    for (const auto& point : checkPoints) {
-        unsigned int x = (unsigned int)point.x;
-        unsigned int y = (unsigned int)point.y;
-
-        if (x < maskSize.x && y < maskSize.y) {
-            if (mask.getPixel({ x, y }) == sf::Color::White || mask.getPixel({ x, y }) == sf::Color::Red) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 
 #include "Bike.h"
@@ -85,8 +38,8 @@ Npc::Npc(float startX, float startY, const PlayerTextures& texture) : textures(t
 	float originX = bounds.size.x / 2.f;
 	float originY = bounds.size.y / 2.f;
 	sprite.setOrigin({ originX, originY });
-	sprite.setScale({ 0.5f, 0.5f });
-	sprite.setPosition({ startX, startY });
+    sprite.setScale({ 0.3f, 0.3f });
+    sprite.setPosition({ startX, startY });
 	m_speed = 150.f;
 	m_velocity = { -1.f, 0.f };
 }
@@ -95,7 +48,7 @@ Npc::Npc(float startX, float startY, const PlayerTextures& texture) : textures(t
 
 void Npc::reset(float startX, float startY) {
     sprite.setPosition({ startX, startY });
-    m_velocity = { 0.f, 0.f };
+    m_velocity = { -1.f, 0.f };
 
 
     sprite.setTexture(textures.right, true);
