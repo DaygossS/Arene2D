@@ -4,12 +4,9 @@
 static sf::Color Bleu = sf::Color(0, 50, 100);
 
 MainMenu::MainMenu(float width, float height)
-    : m_width(width), m_height(height), m_state(STATE_MAIN),
-    m_gridSprite(m_gridTexture),
-    m_carSprite(m_carTexture),
-    m_animationTimer(0.f),
-    m_currentFrame(0),
-    m_selectedItemIndex(-1)
+    : m_width(width), m_height(height), m_state(STATE_MAIN), m_returnButton(m_font),
+    m_gridSprite(m_gridTexture), m_carSprite(m_carTexture),
+    m_animationTimer(0.f), m_currentFrame(0), m_selectedItemIndex(-1)
 {
 }
 
@@ -18,30 +15,23 @@ bool MainMenu::init(const std::string& fontPath) {
 
     sf::RenderTexture rt;
     int gridSize = 40;
+    if (rt.resize({ (unsigned int)gridSize, (unsigned int)gridSize })) {
+        rt.clear(sf::Color::Black);
+        sf::RectangleShape cell({ (float)gridSize, (float)gridSize });
+        cell.setFillColor(sf::Color::Transparent);
+        cell.setOutlineColor(Bleu);
+        cell.setOutlineThickness(-1.f);
+        rt.draw(cell);
+        rt.display();
+        m_gridTexture = rt.getTexture();
+        m_gridTexture.setRepeated(true);
+        m_gridSprite.setTexture(m_gridTexture);
+        m_gridSprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)m_width, (int)m_height }));
+    }
 
-    if (!rt.resize({ (unsigned int)gridSize, (unsigned int)gridSize })) return false;
-
-    rt.clear(sf::Color::Black);
-
-    sf::RectangleShape cell({ (float)gridSize, (float)gridSize });
-    cell.setFillColor(sf::Color::Transparent);
-    cell.setOutlineColor(Bleu);
-    cell.setOutlineThickness(-1.f);
-
-    rt.draw(cell);
-    rt.display();
-
-    m_gridTexture = rt.getTexture();
-    m_gridTexture.setRepeated(true);
-    m_gridSprite.setTexture(m_gridTexture);
-    m_gridSprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)m_width, (int)m_height }));
-
-    // --- MENU PRINCIPAL ---
     m_mainOptions.clear();
     std::string mainTexts[3] = { "JOUER", "OPTIONS", "QUITTER" };
-
-    float totalHeightMain = 3 * 100.f;
-    float startYMain = (m_height / 2.f) - (totalHeightMain / 2.f) + 25.f;
+    float startYMain = (m_height / 2.f) - 150.f + 25.f;
 
     for (int i = 0; i < 3; i++) {
         sf::Text text(m_font);
@@ -50,18 +40,14 @@ bool MainMenu::init(const std::string& fontPath) {
         text.setFillColor(Bleu);
         text.setOutlineColor(Bleu);
         text.setOutlineThickness(2);
-
         sf::FloatRect textRect = text.getLocalBounds();
         text.setOrigin({ textRect.size.x / 2.f, textRect.size.y / 2.f });
         text.setPosition({ m_width * 0.25f, startYMain + (i * 100.f) });
-
         m_mainOptions.push_back(text);
     }
 
-    // --- MENU NIVEAUX ---
     m_levelOptions.clear();
-    float totalHeightLevels = 5 * 80.f;
-    float startYLevels = (m_height / 2.f) - (totalHeightLevels / 2.f) + 20.f;
+    float startYLevels = (m_height / 2.f) - 200.f + 20.f;
 
     for (int i = 0; i < 5; i++) {
         sf::Text text(m_font);
@@ -70,26 +56,27 @@ bool MainMenu::init(const std::string& fontPath) {
         text.setFillColor(Bleu);
         text.setOutlineColor(Bleu);
         text.setOutlineThickness(2);
-
         sf::FloatRect textRect = text.getLocalBounds();
         text.setOrigin({ textRect.size.x / 2.f, textRect.size.y / 2.f });
         text.setPosition({ m_width * 0.25f, startYLevels + (i * 80.f) });
-
         m_levelOptions.push_back(text);
     }
 
-    if (!m_carTexture.loadFromFile("../Assets/MenuVisu.png")) {
-        std::cout << "Erreur : Impossible de charger MenuVisu.png" << std::endl;
-    }
-    else {
-        const int CAR_COLS = 7;
-        const int CAR_ROWS = 7;
+    // Bouton RETOUR en rouge
+    m_returnButton.setFont(m_font);
+    m_returnButton.setString("RETOUR");
+    m_returnButton.setCharacterSize(40);
+    m_returnButton.setFillColor(sf::Color::Red);
+    m_returnButton.setOutlineColor(sf::Color::Red);
+    m_returnButton.setOutlineThickness(1);
+    sf::FloatRect retRect = m_returnButton.getLocalBounds();
+    m_returnButton.setOrigin({ retRect.size.x / 2.f, retRect.size.y / 2.f });
+    m_returnButton.setPosition({ m_width * 0.25f, startYLevels + (5 * 80.f) + 40.f });
 
-        int frameW = m_carTexture.getSize().x / CAR_COLS;
-        int frameH = m_carTexture.getSize().y / CAR_ROWS;
-
+    if (m_carTexture.loadFromFile("../Assets/MenuVisu.png")) {
+        int frameW = m_carTexture.getSize().x / 7;
+        int frameH = m_carTexture.getSize().y / 7;
         m_carRect = sf::IntRect({ 0, 0 }, { frameW, frameH });
-
         m_carSprite.setTexture(m_carTexture);
         m_carSprite.setTextureRect(m_carRect);
         m_carSprite.setOrigin({ frameW / 2.f, frameH / 2.f });
@@ -107,61 +94,54 @@ void MainMenu::update(float deltaTime) {
         m_optionsMenu.update();
         return;
     }
-
-    const float TIME_PER_FRAME = 0.08f;
-    const int TOTAL_FRAMES = 48;
-    const int CAR_COLS = 7;
-
     m_animationTimer += deltaTime;
-
-    if (m_animationTimer >= TIME_PER_FRAME) {
+    if (m_animationTimer >= 0.08f) {
         m_animationTimer = 0.f;
         m_currentFrame++;
-        if (m_currentFrame >= TOTAL_FRAMES) m_currentFrame = 0;
-
-        int col = m_currentFrame % CAR_COLS;
-        int row = m_currentFrame / CAR_COLS;
-
+        if (m_currentFrame >= 48) m_currentFrame = 0;
+        int col = m_currentFrame % 7;
+        int row = m_currentFrame / 7;
         m_carRect.position.x = col * m_carRect.size.x;
         m_carRect.position.y = row * m_carRect.size.y;
-
         m_carSprite.setTextureRect(m_carRect);
     }
 }
 
 void MainMenu::draw(sf::RenderWindow& window) {
     window.draw(m_gridSprite);
-
     if (m_state == STATE_OPTIONS) {
         m_optionsMenu.draw(window);
     }
     else if (m_state == STATE_LEVELS) {
         window.draw(m_carSprite);
-        for (const auto& text : m_levelOptions) {
-            window.draw(text);
-        }
+        for (const auto& text : m_levelOptions) window.draw(text);
+        window.draw(m_returnButton);
     }
     else {
         window.draw(m_carSprite);
-        for (const auto& text : m_mainOptions) {
-            window.draw(text);
-        }
+        for (const auto& text : m_mainOptions) window.draw(text);
     }
 }
 
 int MainMenu::handleInput(sf::RenderWindow& window, const sf::Event& event) {
     if (m_state == STATE_OPTIONS) {
-        if (m_optionsMenu.handleEvent(event, window)) {
-            m_state = STATE_MAIN;
-        }
+        if (m_optionsMenu.handleEvent(event, window)) m_state = STATE_MAIN;
         return 0;
     }
 
+    sf::Vector2f mousePosF(static_cast<float>(sf::Mouse::getPosition(window).x), static_cast<float>(sf::Mouse::getPosition(window).y));
+
+    if (m_state == STATE_LEVELS) {
+        if (m_returnButton.getGlobalBounds().contains(mousePosF)) {
+            m_returnButton.setFillColor(sf::Color::White);
+            if (event.is<sf::Event::MouseButtonPressed>()) m_state = STATE_MAIN;
+        }
+        else {
+            m_returnButton.setFillColor(sf::Color::Red);
+        }
+    }
+
     std::vector<sf::Text>* currentMenu = (m_state == STATE_LEVELS) ? &m_levelOptions : &m_mainOptions;
-
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-
     m_selectedItemIndex = -1;
     for (size_t i = 0; i < currentMenu->size(); i++) {
         if ((*currentMenu)[i].getGlobalBounds().contains(mousePosF)) {
@@ -175,16 +155,9 @@ int MainMenu::handleInput(sf::RenderWindow& window, const sf::Event& event) {
 
     if (const auto* mouseBtn = event.getIf<sf::Event::MouseButtonPressed>()) {
         if (mouseBtn->button == sf::Mouse::Button::Left && m_selectedItemIndex != -1) {
-
             if (m_state == STATE_MAIN) {
-                if (m_selectedItemIndex == 0) {
-                    m_state = STATE_LEVELS;
-                    return 0;
-                }
-                if (m_selectedItemIndex == 1) {
-                    m_state = STATE_OPTIONS;
-                    return 0;
-                }
+                if (m_selectedItemIndex == 0) { m_state = STATE_LEVELS; return 0; }
+                if (m_selectedItemIndex == 1) { m_state = STATE_OPTIONS; return 0; }
                 if (m_selectedItemIndex == 2) return 3;
             }
             else if (m_state == STATE_LEVELS) {
@@ -194,18 +167,12 @@ int MainMenu::handleInput(sf::RenderWindow& window, const sf::Event& event) {
         }
     }
 
-    // Gestion du retour au menu principal avec Echap si on est dans les niveaux
     if (m_state == STATE_LEVELS) {
         if (const auto* key = event.getIf<sf::Event::KeyPressed>()) {
-            if (key->scancode == sf::Keyboard::Scancode::Escape) {
-                m_state = STATE_MAIN;
-            }
+            if (key->scancode == sf::Keyboard::Scancode::Escape) m_state = STATE_MAIN;
         }
     }
-
     return 0;
 }
 
-std::string MainMenu::getSelectedLevelFile() const {
-    return m_selectedLevelFile;
-}
+std::string MainMenu::getSelectedLevelFile() const { return m_selectedLevelFile; }
