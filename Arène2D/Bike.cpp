@@ -79,12 +79,11 @@ void Npc::draw(sf::RenderWindow& window) {
 	window.draw(sprite);
 }
 
-Npc::Npc(float startX, float startY, const sf::Texture& texture) : sprite(texture) {
+Npc::Npc(float startX, float startY, const PlayerTextures& texture) : textures(texture), sprite(texture.right) {
 
 	sf::FloatRect bounds = sprite.getLocalBounds();
 	float originX = bounds.size.x / 2.f;
 	float originY = bounds.size.y / 2.f;
-	sprite.setTexture(texture);
 	sprite.setOrigin({ originX, originY });
 	sprite.setScale({ 0.5f, 0.5f });
 	sprite.setPosition({ startX, startY });
@@ -93,6 +92,20 @@ Npc::Npc(float startX, float startY, const sf::Texture& texture) : sprite(textur
 }
 
 
+
+void Npc::reset(float startX, float startY) {
+    sprite.setPosition({ startX, startY });
+    m_velocity = { 0.f, 0.f };
+
+
+    sprite.setTexture(textures.right, true);
+    updateOrigin();
+}
+
+void Npc::updateOrigin() {
+    sf::FloatRect bounds = sprite.getLocalBounds();
+    sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
+}
 
 //#include "Player.hpp"
 //

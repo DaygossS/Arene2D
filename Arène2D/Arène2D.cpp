@@ -10,16 +10,15 @@
 #include "MainMenu.hpp" 
 #include "OptionsMenu.hpp"
 
+
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
 const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 const int HUD_HEIGHT = 60;
-
+#include "Bike.cpp"
 // Énumération pour gérer l'état du jeu
 enum GameState { MENU, GAME, OPTIONS };
-
-#include "Bike.cpp"
 
 void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
     std::ifstream file(filename);
@@ -46,62 +45,7 @@ int main() {
 
     sf::View hudView = window.getDefaultView();
 
-
-
-bool isCollidingWithTrail(const sf::FloatRect& bounds, const sf::Vector2f& velocity, const sf::Image& mask) {
-
-    
-    float margin = 2.f;
-
-    
-    std::vector<sf::Vector2f> checkPoints;
-
-    
-    if (velocity.x > 0) {
-        
-        checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + margin });
-        checkPoints.push_back({ bounds.position.x + bounds.size.x, bounds.position.y + bounds.size.y - margin });
-    }
-    
-    else if (velocity.x < 0) {
-        
-        checkPoints.push_back({ bounds.position.x, bounds.position.y + margin });
-        checkPoints.push_back({ bounds.position.x, bounds.position.y + bounds.size.y - margin });
-    }
-    
-    else if (velocity.y > 0) {
-        
-        checkPoints.push_back({ bounds.position.x + margin, bounds.position.y + bounds.size.y });
-        checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y + bounds.size.y });
-    }
-    
-    else if (velocity.y < 0) {
-        
-        checkPoints.push_back({ bounds.position.x + margin, bounds.position.y });
-        checkPoints.push_back({ bounds.position.x + bounds.size.x - margin, bounds.position.y });
-    }
-
-    
-    sf::Vector2u maskSize = mask.getSize();
-    for (const auto& point : checkPoints) {
-        unsigned int x = (unsigned int)point.x;
-        unsigned int y = (unsigned int)point.y;
-
-        if (x < maskSize.x && y < maskSize.y) {
-            if (mask.getPixel({ x, y }) == sf::Color::White) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-
-int main() {
-    sf::RenderWindow window(sf::VideoMode({ (unsigned int)(MAP_WIDTH * TILE_SIZE), (unsigned int)(MAP_HEIGHT * TILE_SIZE) }), "TRON GAME");
-    window.setFramerateLimit(60);
-
-    
+    // --- ASSETS ---
     sf::Texture tileset = createTronTexture(TILE_SIZE, TEXTURE_COLS);
     sf::Sprite mapSprite(tileset);
 
@@ -118,7 +62,10 @@ int main() {
 
     // --- OBJETS JEU ---
     Player player(100.f, 300.f, playerAssets);
+    Npc npc(1000.f, 500.f, playerAssets);
     TrailSystem trailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
+    TrailSystem trailSystem2(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
+
     ScoreSystem scoreSystem;
     if (!scoreSystem.init("../Assets/font.ttf")) std::cout << "Erreur police score" << std::endl;
 
@@ -183,6 +130,8 @@ int main() {
             if (isDead) {
                 player.reset(100.f, 300.f);
                 trailSystem.reset();
+                npc.reset(1000.f, 500.f);
+                trailSystem2.reset();
                 scoreSystem.reset();
                 // Optionnel : currentState = MENU; // Si tu veux retourner au menu quand tu meurs
             }
@@ -210,6 +159,8 @@ int main() {
             }
             trailSystem.draw(window);
             player.draw(window);
+            trailSystem2.draw(window);
+            npc.draw(window);
             if (showHitbox) CollisionManager::drawHitbox(window, playerBounds, sf::Color::Red);
         }
 

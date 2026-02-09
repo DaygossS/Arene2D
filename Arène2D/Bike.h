@@ -32,6 +32,7 @@ public:
     sf::Vector2f m_velocity;
     FSM::StateMachine<Context> fsm;
 
+    PlayerTextures textures;
     Context context{};
 
     sf::Vector2f GetPosition() {
@@ -40,7 +41,7 @@ public:
     sf::Vector2f getSize() const { return sprite.getScale(); }
     sf::Vector2f getVelocity() const { return m_velocity; }
 
-    Npc(float startX, float startY, const sf::Texture& texture);
+    Npc(float startX, float startY, const PlayerTextures& texture);
 
     void draw(sf::RenderWindow& window);
 
@@ -154,6 +155,9 @@ public:
 
         
     }
+
+    void reset(float startX, float startY);
+    void updateOrigin();
 };
 
 
