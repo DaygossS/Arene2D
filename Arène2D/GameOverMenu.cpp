@@ -1,5 +1,7 @@
 #include "GameOverMenu.hpp"
 
+
+static sf::Color Bleu = sf::Color(0, 50, 100);
 GameOverMenu::GameOverMenu()
     : m_width(0), m_height(0),
     // SFML 3.0 : Obligatoire d'init les textes avec la police
@@ -75,14 +77,14 @@ GameOverAction GameOverMenu::handleEvent(const sf::Event& event, sf::RenderWindo
 
     // Survol (Hover effect)
     if (m_btnRestart.getGlobalBounds().contains(mousePosF))
-        m_btnRestart.setFillColor(sf::Color::Yellow);
-    else
         m_btnRestart.setFillColor(sf::Color::White);
+    else
+        m_btnRestart.setFillColor(Bleu);
 
     if (m_btnMenu.getGlobalBounds().contains(mousePosF))
-        m_btnMenu.setFillColor(sf::Color::Yellow);
-    else
         m_btnMenu.setFillColor(sf::Color::White);
+    else
+        m_btnMenu.setFillColor(Bleu);
 
     
     if (const auto* mouseBtn = event.getIf<sf::Event::MouseButtonPressed>()) {
