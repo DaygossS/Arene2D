@@ -167,7 +167,7 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
             if (m_currentTab == TAB_VOLUME) {
                 // Vérifier clic sur les barres pour commencer le drag
                 sf::FloatRect musicArea = m_musicTrack.getGlobalBounds();
-                musicArea.size.y += 20; // Zone plus large pour cliquer facile
+                musicArea.size.y += 20; 
                 musicArea.position.y -= 10;
 
                 sf::FloatRect sfxArea = m_sfxTrack.getGlobalBounds();
@@ -178,23 +178,23 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                 if (sfxArea.contains(mousePosF)) m_isDraggingSfx = true;
             }
 
-            // 4. Logique Onglet CODE
+            
             if (m_currentTab == TAB_CODE) {
                 if (m_validateBtnShape.getGlobalBounds().contains(mousePosF)) {
                     // Simulation de validation
                     if (m_inputString == "test") {
-                        m_feedbackText.setString("Code Accepte : Mode Dieu !");
+                        m_feedbackText.setString("Code Accepte : Mode test !");
                         m_feedbackText.setFillColor(sf::Color::Green);
                     } else {
                         m_feedbackText.setString("Code Invalide.");
-                        m_feedbackText.setFillColor(sf::Color::Red);
+                        m_feedbackText.setFillColor(sf::Color::White);
                     }
                 }
             }
         }
     }
 
-    // --- GESTION RELACHEMENT CLIC (Fin du drag) ---
+    // GESTION RELACHEMENT CLIC (Fin du drag)
     if (const auto* mouseRel = event.getIf<sf::Event::MouseButtonReleased>()) {
         if (mouseRel->button == sf::Mouse::Button::Left) {
             m_isDraggingMusic = false;
@@ -202,10 +202,10 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
         }
     }
 
-    // --- GESTION MOUVEMENT SOURIS (Drag Sliders) ---
+    // GESTION MOUVEMENT SOURIS (Drag Sliders)
     if (event.is<sf::Event::MouseMoved>()) {
         // Survol bouton retour
-        if (m_backButton.getGlobalBounds().contains(mousePosF)) m_backButton.setFillColor(sf::Color::Cyan);
+        if (m_backButton.getGlobalBounds().contains(mousePosF)) m_backButton.setFillColor(sf::Color::Red);
         else m_backButton.setFillColor(sf::Color::White);
 
         if (m_currentTab == TAB_VOLUME) {
@@ -220,18 +220,18 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
         }
     }
 
-    // --- GESTION SAISIE TEXTE (Onglet Code uniquement) ---
+    // GESTION SAISIE TEXTE (Onglet Code uniquement)
     if (m_currentTab == TAB_CODE) {
         if (const auto* textEvt = event.getIf<sf::Event::TextEntered>()) {
-            // Unicode 8 = Backspace
+           
             if (textEvt->unicode == 8) {
                 if (!m_inputString.empty()) m_inputString.pop_back();
             }
-            // Unicode 13 = Enter (Optionnel, si tu veux valider avec Entrée)
+            
             else if (textEvt->unicode == 13) {
-                // Code de validation ici aussi si tu veux
+                
             }
-            // Caractères imprimables standards (Lettres, Chiffres...)
+            
             else if (textEvt->unicode < 128) {
                 m_inputString += static_cast<char>(textEvt->unicode);
             }
