@@ -12,6 +12,7 @@
 #include "Bike.cpp"
 #include "PauseMenu.hpp"
 #include "GameOverMenu.hpp" 
+#include "AudioSystem.hpp"
 
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
@@ -80,6 +81,12 @@ int main() {
     GameOverMenu gameOverMenu;
     if (!gameOverMenu.init("../Assets/Fonts/arial.ttf", (float)totalWidth, (float)totalHeight)) std::cout << "Erreur police gameover" << std::endl;
 
+    // --- AUDIO SYSTEM ---
+    AudioSystem audioSystem;
+    if (!audioSystem.init()) std::cout << "Erreur init audio" << std::endl;
+    audioSystem.playMenuMusic();
+    // --------------------
+
     sf::RectangleShape hudBackground({ (float)totalWidth, (float)HUD_HEIGHT });
     hudBackground.setFillColor(sf::Color(30, 30, 30));
 
@@ -91,6 +98,9 @@ int main() {
 
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
+
+        // Mise à jour de la playlist
+        audioSystem.update();
 
         while (const auto event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) window.close();
@@ -105,22 +115,31 @@ int main() {
                     player.reset(100.f, 300.f);
                     trailSystem.reset();
                     scoreSystem.reset();
+
+                    audioSystem.playGameMusic(); // <--- JEU
                 }
                 if (action == 3) window.close();
             }
             else if (currentState == GAME) {
                 if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
-                    if (key->scancode == sf::Keyboard::Scancode::Escape) currentState = PAUSE;
+                    if (key->scancode == sf::Keyboard::Scancode::Escape) {
+                        currentState = PAUSE;
+                        audioSystem.playPauseMusic(); // <--- PAUSE
+                    }
                     if (key->scancode == sf::Keyboard::Scancode::K) scoreSystem.addKill();
                     if (key->scancode == sf::Keyboard::Scancode::F1) showHitbox = !showHitbox;
                 }
             }
             else if (currentState == PAUSE) {
                 int action = pauseMenu.handleInput(window, *event);
-                if (action == 1) currentState = GAME;
+                if (action == 1) {
+                    currentState = GAME;
+                    audioSystem.playGameMusic(); // <--- REPRISE JEU
+                }
                 if (action == 2) {
                     currentState = MENU;
                     hasGameStarted = false;
+                    audioSystem.playMenuMusic(); // <--- RETOUR MENU
                 }
             }
             else if (currentState == GAME_OVER) {
@@ -131,10 +150,14 @@ int main() {
                     scoreSystem.reset();
                     hasGameStarted = false;
                     currentState = GAME;
+
+                    audioSystem.playGameMusic(); // <--- RESTART
                 }
                 else if (action == GameOverAction::BackToMenu) {
                     currentState = MENU;
                     hasGameStarted = false;
+
+                    audioSystem.playMenuMusic(); // <--- RETOUR MENU
                 }
             }
         }
@@ -170,6 +193,8 @@ int main() {
             if (isDead) {
                 currentState = GAME_OVER;
                 gameOverMenu.setState(false, scoreSystem.getScore());
+
+                audioSystem.playGameOverMusic(); // <--- GAME OVER
             }
 
             bool iaDead = false;
