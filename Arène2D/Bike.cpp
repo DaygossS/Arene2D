@@ -40,7 +40,7 @@ Npc::Npc(float startX, float startY, const PlayerTextures& texture) : textures(t
 	sprite.setOrigin({ originX, originY });
     sprite.setScale({ 0.3f, 0.3f });
     sprite.setPosition({ startX, startY });
-	m_speed = 150.f;
+	m_speed = 300.f;
 	m_velocity = { -1.f, 0.f };
 }
 

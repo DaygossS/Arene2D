@@ -69,40 +69,42 @@ public:
 
         //boucle: 1324 bghd
 
-        int choice = rand() % 10;
-        std::cout << choice << std::endl;
-        if (choice==1 && (m_velocity.y != 1.f) && !((act1 == 4 && act2 == 2 && act3 == 3) || (act1 == 3 && act2 == 2 && act3 == 4))) {
+
+        int choice = rand() % 90;
+        if (choice == 1 && (m_velocity.y == 0.f) && !((act1 == 4 && act2 == 2 && act3 == 3) || (act1 == 3 && act2 == 2 && act3 == 4))) {
             m_velocity.y = -1.f;
             m_velocity.x = 0.f;
-            act3 = act2;
+            /*act3 = act2;
             act2 = act1;
-            act1 = choice;
+            act1 = choice;*/
         }
-        else if (choice == 2 && (m_velocity.y != -1.f) && !((act1 == 4 && act2 == 1 && act3 == 3) || (act1 == 3 && act2 == 1 && act3 == 4))) {
+        else if (choice == 2 && (m_velocity.y == 0.f) && !((act1 == 4 && act2 == 1 && act3 == 3) || (act1 == 3 && act2 == 1 && act3 == 4))) {
             m_velocity.y = 1.f;
             m_velocity.x = 0.f;
-            act3 = act2;
+            /*act3 = act2;
             act2 = act1;
-            act1 = choice;
+            act1 = choice;*/
         }
-        else if (choice == 3 && (m_velocity.x != 1.f) && !((act1 == 2 && act2 == 4 && act3 == 1) || (act1 == 1 && act2 == 4 && act3 == 2))) {
+        else if (choice == 3 && (m_velocity.x == 0.f) && !((act1 == 2 && act2 == 4 && act3 == 1) || (act1 == 1 && act2 == 4 && act3 == 2))) {
             m_velocity.x = -1.f;
             m_velocity.y = 0.f;
-            act3 = act2;
+            /*act3 = act2;
             act2 = act1;
-            act1 = choice;
+            act1 = choice;*/
         }
-        else if (choice == 4 && (m_velocity.x != -1.f) && !((act1 == 2 && act2 == 3 && act3 == 1) || (act1 == 1 && act2 == 3 && act3 == 2))) {
+        else if (choice == 4 && (m_velocity.x == 0.f) && !((act1 == 2 && act2 == 3 && act3 == 1) || (act1 == 1 && act2 == 3 && act3 == 2))) {
             m_velocity.x = 1.f;
             m_velocity.y = 0.f;
-            act3 = act2;
+            /*act3 = act2;
             act2 = act1;
-            act1 = choice;
+            act1 = choice;*/
         }
+
+
         
         sprite.move(m_speed * m_velocity * deltaTime);
 
-        sf::FloatRect IaBounds(getPosition(), getSize());
+        sf::FloatRect IaBounds = CollisionManager::getHitbox(getPosition(), 8.f);
         bool willdie = false;
         
         if (IAisCollidingWithMap(IaBounds, collisions)) {

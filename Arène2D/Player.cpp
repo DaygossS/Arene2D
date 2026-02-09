@@ -10,7 +10,7 @@ Player::Player(float startX, float startY, const PlayerTextures& texture)
     sprite.setScale({ 0.3f, 0.3f });
     sprite.setPosition({ startX, startY });
 
-    m_speed = 150.f;
+    m_speed = 300.f;
     m_velocity = { 0.f, 0.f };
 
     

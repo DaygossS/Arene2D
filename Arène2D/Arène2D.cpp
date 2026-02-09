@@ -123,7 +123,9 @@ int main() {
             npc.update(deltaTime,collisions,trailSystem,trailSystem2);
             scoreSystem.update(deltaTime);
 
-            sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 20.f);
+            sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
+            sf::FloatRect npcBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
+
             bool isDead = false;
 
             if (CollisionManager::checkMapCollision(playerBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) isDead = true;
@@ -138,6 +140,21 @@ int main() {
                 scoreSystem.reset();
                 // Optionnel : currentState = MENU; // Si tu veux retourner au menu quand tu meurs
             }
+            
+            bool iaDead = false;
+
+            if (CollisionManager::checkMapCollision(npcBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
+            else if (trailSystem.checkCollision(npcBounds, npc.getVelocity())) iaDead = true;
+            else if (trailSystem2.checkCollision(npcBounds, npc.getVelocity())) iaDead = true;
+
+            if (iaDead) {
+                trailSystem.reset();
+                npc.reset(1000.f, 500.f);
+                trailSystem2.reset();
+                scoreSystem.addKill();
+                // Optionnel : currentState = MENU; // Si tu veux retourner au menu quand tu meurs
+            }
+
 
             trailSystem.addTrail(player.getPosition(), sf::Color::White);
             trailSystem2.addTrail(npc.getPosition(), sf::Color::Red);
