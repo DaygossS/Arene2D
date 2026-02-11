@@ -24,7 +24,7 @@ void FSM::StateMachine<ContextType>::Update(Npc npc,float deltatime,ContextType 
 
     auto next = currentState->TryGetNext(_context);
 
-    if (next)
+    if (next) 
     {
         currentState->Exit(_context);
         currentState = next;
