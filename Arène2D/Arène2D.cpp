@@ -114,6 +114,8 @@ int main() {
                     hasGameStarted = false;
                     player.reset(100.f, 300.f);
                     trailSystem.reset();
+                    npc.reset(1000.f, 500.f);
+                    trailSystem2.reset();
                     scoreSystem.reset();
 
                     audioSystem.playGameMusic(); // <--- JEU
@@ -176,6 +178,7 @@ int main() {
             if (!hasGameStarted) {
                 if (player.getVelocity().x != 0 || player.getVelocity().y != 0) {
                     hasGameStarted = true;
+                    npc.setActie(true);
                 }
             }
 
@@ -210,7 +213,7 @@ int main() {
                 npc.reset(1000.f, 500.f);
                 trailSystem2.reset();
                 scoreSystem.addKill();
-                // Optionnel : currentState = MENU; // Si tu veux retourner au menu quand tu meurs
+                
             }
 
 

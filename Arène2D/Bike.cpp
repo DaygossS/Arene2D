@@ -49,7 +49,7 @@ Npc::Npc(float startX, float startY, const PlayerTextures& texture) : textures(t
 void Npc::reset(float startX, float startY) {
     sprite.setPosition({ startX, startY });
     m_velocity = { -1.f, 0.f };
-
+    activate = false;
 
     sprite.setTexture(textures.right, true);
     updateOrigin();
