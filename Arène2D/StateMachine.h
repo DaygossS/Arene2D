@@ -18,10 +18,10 @@ namespace FSM
         void Init(State* _initialState, ContextType _context);
         void Update(ContextType _context);
 
-    private:
-        std::vector<State*> states;
-
         State* currentState = nullptr;
+        std::vector<State*> states;
+    private:
+
     };
 }
 

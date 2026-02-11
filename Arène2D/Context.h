@@ -4,8 +4,6 @@
 #include <iostream>
 
 
-class Npc;
-
 class Context
 {
 public:
@@ -13,10 +11,12 @@ public:
     //Player* player
     
     // Input
-    //sf::Vector2f GetPosition(auto player) {
-        //return player.Getposition();
-    //}
-
+    sf::Vector2f GetPosition(Npc player) {
+        return player.getPosition();
+    }
+    sf::Vector2f GetPositionP(Player player) {
+        return player.getPosition();
+    }
     //Player GetPlayer(){ donc pas besoin?
     //  return Player player
     // }
