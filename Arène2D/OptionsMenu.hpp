@@ -19,6 +19,7 @@ public:
 
     bool getspeedy() { return speedy; }
     bool getslow() { return slow; }
+    bool getrainbow() { return rainbow; }
 private:
     sf::Font m_font;
     float m_windowWidth;
@@ -61,4 +62,5 @@ private:
 
     bool speedy = false;
     bool slow = false;
+    bool rainbow = false;
 };

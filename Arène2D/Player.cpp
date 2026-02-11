@@ -82,3 +82,15 @@ void Player::updateOrigin() {
     sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
 }
+
+
+
+
+
+
+
+
+
+
+
+

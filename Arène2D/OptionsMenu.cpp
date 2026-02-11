@@ -197,6 +197,19 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                         }
 
                     }
+                    else if (m_inputString == "rainbow") {
+                        if (!slow) {
+                            m_feedbackText.setString("Code Accepte : Mode rainbow !");
+                            m_feedbackText.setFillColor(sf::Color::Green);
+                            rainbow = true;
+                        }
+                        else {
+                            m_feedbackText.setString("Code Accepte : Mode rainbow Deactive!");
+                            m_feedbackText.setFillColor(sf::Color::Red);
+                            rainbow = false;
+                        }
+
+                    }
                     else {
                         m_feedbackText.setString("Code Invalide.");
                         m_feedbackText.setFillColor(sf::Color::White);

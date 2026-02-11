@@ -12,6 +12,9 @@
 #include "PauseMenu.hpp"
 #include "GameOverMenu.hpp" 
 #include "AudioSystem.hpp"
+#include "smallthing.cpp"
+
+
 
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
@@ -31,12 +34,14 @@ static void openMap(std::vector<int>& mapData, std::vector<int>& colData, const 
     while (count < colData.size() && file >> val) { colData[count++] = val; }
 }
 
+
+
 int main() {
     unsigned int totalWidth = MAP_WIDTH * TILE_SIZE;
     unsigned int gameHeight = MAP_HEIGHT * TILE_SIZE;
     unsigned int totalHeight = gameHeight + HUD_HEIGHT;
 
-
+    float ticks = 0.f;
 
 
     sf::RenderWindow window(sf::VideoMode({ totalWidth, totalHeight }), "TRON GAME");
@@ -246,8 +251,12 @@ int main() {
 
             }
 
-
-            trailSystem.addTrail(player.getPosition(), sf::Color::White);
+            sf::Color playercol = sf::Color::White;
+            if (mainMenu.m_optionsMenu.getrainbow()) {
+                std::cout << ticks << std::endl;
+                playercol = rainbowing(ticks);
+            }
+            trailSystem.addTrail(player.getPosition(), playercol);
             trailSystem2.addTrail(npc.getPosition(), sf::Color::Red);
             trailSystem3.addTrail(npc2.getPosition(), sf::Color::Blue);
 
@@ -267,7 +276,7 @@ int main() {
                 npc.setSpeed(300.f);
                 npc2.setSpeed(300.f);
             }
-
+            ticks += 100.f * deltaTime;
         }
         else if (currentState == PAUSE) {
             pauseMenu.update();
@@ -317,8 +326,12 @@ int main() {
                 gameOverMenu.draw(window);
             }
         }
+        
 
         window.display();
     }
     return 0;
 }
+
+
+
