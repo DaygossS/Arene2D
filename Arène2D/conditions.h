@@ -8,11 +8,11 @@ namespace AI
     class Conditions
     {
     public:
-        static bool IsClosePlayer(Context context)
+        static bool IsClosePlayer(Context context, Npc* npc)
         {
             sf::Vector2f posme;
             //if (context.targetia == 1) {
-            posme= context.GetPosition(context.npc);
+            posme= context.GetPosition(npc);
             //}
             //sf::Vector2f player = context.GetPosition(context.GetPlayer());
             sf::Vector2f player = { 0.f,0.f };

@@ -7,12 +7,12 @@
 class Context
 {
 public:
-    Npc* npc;
+    //Npc* npc;
     //Player* player
     
     // Input
-    sf::Vector2f GetPosition(Npc player) {
-        return player.getPosition();
+    sf::Vector2f GetPosition(Npc* player) {
+        return (*player).getPosition();
     }
     sf::Vector2f GetPositionP(Player player) {
         return player.getPosition();

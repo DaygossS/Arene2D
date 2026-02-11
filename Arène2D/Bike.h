@@ -53,11 +53,11 @@ public:
         FightState* fightState = fsm.CreateState<FightState>();
         RoamState* roamState = fsm.CreateState<RoamState>();
 
-        roamState->AddTransition(Conditions::IsClosePlayer, fightState);
+        roamState->AddTransition(Conditions::IsClosePlayer(_context, ), fightState);
 
         fightState->AddTransition([](const Context _context)
             {
-                return !Conditions::IsClosePlayer(_context);
+                return !Conditions::IsClosePlayer(_context, *this);
             }, roamState);
 
         fsm.Init(roamState, context);
