@@ -20,6 +20,7 @@ public:
 
     std::string getSelectedLevelFile() const;
 
+    OptionsMenu m_optionsMenu;
 private:
     float m_width;
     float m_height;
@@ -37,7 +38,6 @@ private:
 
     int m_selectedItemIndex;
 
-    OptionsMenu m_optionsMenu;
 
     // Décors
     sf::Texture m_gridTexture;

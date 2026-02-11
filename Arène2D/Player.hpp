@@ -22,6 +22,8 @@ public :
 	sf::Vector2f getPosition() const { return sprite.getPosition(); }
 	sf::Vector2f getScale() const { return sprite.getScale(); }
 	sf::Vector2f getVelocity() const { return m_velocity; }
+
+	void setSpeed(float newfast) { m_speed = newfast; }
 private:
 	sf::Sprite sprite;
 	sf::Vector2f m_velocity;

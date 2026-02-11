@@ -36,6 +36,9 @@ int main() {
     unsigned int gameHeight = MAP_HEIGHT * TILE_SIZE;
     unsigned int totalHeight = gameHeight + HUD_HEIGHT;
 
+
+
+
     sf::RenderWindow window(sf::VideoMode({ totalWidth, totalHeight }), "TRON GAME");
     window.setFramerateLimit(60);
 
@@ -246,6 +249,24 @@ int main() {
             trailSystem.addTrail(player.getPosition(), sf::Color::White);
             trailSystem2.addTrail(npc.getPosition(), sf::Color::Red);
             trailSystem3.addTrail(npc2.getPosition(), sf::Color::Blue);
+
+
+            if (mainMenu.m_optionsMenu.getspeedy()) {
+                player.setSpeed(600.f);
+                npc.setSpeed(600.f);
+                npc2.setSpeed(600.f);
+            }
+            else if (mainMenu.m_optionsMenu.getslow()) {
+                player.setSpeed(150.f);
+                npc.setSpeed(150.f);
+                npc2.setSpeed(150.f);
+            }
+            else {
+                player.setSpeed(300.f);
+                npc.setSpeed(300.f);
+                npc2.setSpeed(300.f);
+            }
+
         }
         else if (currentState == PAUSE) {
             pauseMenu.update();

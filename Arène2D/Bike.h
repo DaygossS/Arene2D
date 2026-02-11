@@ -46,6 +46,8 @@ public:
     bool getActive() const { return activate; }
     void setActie(bool a) { activate = a; }
 
+    void setSpeed(float newfast) { m_speed = newfast; }
+
     Npc(float startX, float startY, const PlayerTextures& texture);
 
     void draw(sf::RenderWindow& window);

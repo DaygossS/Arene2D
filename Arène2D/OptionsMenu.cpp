@@ -169,6 +169,34 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                         m_feedbackText.setString("Code Accepte : Mode test !");
                         m_feedbackText.setFillColor(sf::Color::Green);
                     }
+                    else if (m_inputString == "speed") {
+                        if (!speedy) {
+                            m_feedbackText.setString("Code Accepte : Mode speedy !");
+                            m_feedbackText.setFillColor(sf::Color::Green);
+                            speedy = true;
+                            slow = false;
+                        }
+                        else {
+                            m_feedbackText.setString("Code Accepte : Mode speedy Deactive!");
+                            m_feedbackText.setFillColor(sf::Color::Red);
+                            speedy = false;
+                        }
+
+                    }
+                    else if (m_inputString == "slow") {
+                        if (!slow) {
+                            m_feedbackText.setString("Code Accepte : Mode snail !");
+                            m_feedbackText.setFillColor(sf::Color::Green);
+                            slow = true;
+                            speedy = false;
+                        }
+                        else {
+                            m_feedbackText.setString("Code Accepte : Mode snail Deactive!");
+                            m_feedbackText.setFillColor(sf::Color::Red);
+                            slow = false;
+                        }
+
+                    }
                     else {
                         m_feedbackText.setString("Code Invalide.");
                         m_feedbackText.setFillColor(sf::Color::White);

@@ -16,6 +16,9 @@ public:
     float getMusicVolume() const { return s_musicVolume; }
     float getSfxVolume() const { return s_sfxVolume; }
 
+
+    bool getspeedy() { return speedy; }
+    bool getslow() { return slow; }
 private:
     sf::Font m_font;
     float m_windowWidth;
@@ -54,4 +57,8 @@ private:
 
     void alignSlider(float volume, sf::RectangleShape& track, sf::CircleShape& handle);
     void updateSliderValue(float mouseX, float& volume, const sf::RectangleShape& track);
+
+
+    bool speedy = false;
+    bool slow = false;
 };
