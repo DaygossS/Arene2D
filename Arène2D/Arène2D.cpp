@@ -66,9 +66,9 @@ int main() {
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
 
     Player player(100.f, 300.f, playerAssets);
-    //TODO: donner des spritesheet aux ia et (des sens (m'en oqp))
-    Npc npc(1000.f, 500.f, playerAssets);
-    Npc npc2(1000.f, 800.f, playerAssets);
+    //TODO: donner des spritesheet aux ia et (des sens (m'en oqp quand yaura les spritesheet))
+    Npc npc(100.f, 300.f, playerAssets);
+    Npc npc2(100.f, 300.f, playerAssets);
     npc.Init();
     npc2.Init();
     TrailSystem trailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
@@ -119,11 +119,12 @@ int main() {
                     openMap(map, collisions, levelFile);
                     currentState = GAME;
                     hasGameStarted = false;
-                    player.reset(100.f, 300.f);
+                    player.reset(64.f, 448.f);
                     trailSystem.reset();
-                    npc.reset(1000.f, 500.f);
+
+                    npc.reset(1536.f, 64.f);
                     trailSystem2.reset();
-                    npc2.reset(1000.f, 800.f);
+                    npc2.reset(1536.f, 834.f);
                     trailSystem3.reset();
                     scoreSystem.reset();
 
@@ -156,9 +157,9 @@ int main() {
             else if (currentState == GAME_OVER) {
                 GameOverAction action = gameOverMenu.handleEvent(*event, window);
                 if (action == GameOverAction::Restart) {
-                    player.reset(100.f, 300.f);
-                    npc.reset(1000.f, 500.f);
-                    npc2.reset(1000.f, 800.f);
+                    player.reset(64.f, 448.f);
+                    npc.reset(1536.f, 64.f);
+                    npc2.reset(1536.f, 834.f);
                     trailSystem.reset();
                     trailSystem2.reset();
                     trailSystem3.reset();
@@ -226,7 +227,7 @@ int main() {
             else if (trailSystem3.checkCollision(npcBounds, npc.getVelocity())) iaDead = true;
 
             if (iaDead) {
-                npc.reset(1000.f, 500.f);
+                npc.reset(1536.f, 64.f);
                 trailSystem2.reset();
                 scoreSystem.addKill();
 
@@ -239,7 +240,7 @@ int main() {
             else if (trailSystem3.checkCollision(npc2Bounds, npc2.getVelocity())) iaDead = true;
 
             if (iaDead) {
-                npc2.reset(1000.f, 800.f);
+                npc2.reset(1536.f, 834.f);
                 trailSystem3.reset();
                 scoreSystem.addKill();
 
