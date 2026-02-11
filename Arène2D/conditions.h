@@ -8,7 +8,7 @@ namespace AI
     class Conditions
     {
     public:
-        static bool IsClosePlayer(Context context, Npc* npc)
+        static bool IsClosePlayer(Npc &npc,Context context)
         {
             sf::Vector2f posme;
             //if (context.targetia == 1) {

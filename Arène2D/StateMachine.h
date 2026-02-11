@@ -16,7 +16,7 @@ namespace FSM
         StateType* CreateState();
 
         void Init(State* _initialState, ContextType _context);
-        void Update(ContextType _context);
+        void Update(Npc npc, float deltatime, ContextType _context);
 
         State* currentState = nullptr;
         std::vector<State*> states;

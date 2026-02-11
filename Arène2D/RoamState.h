@@ -21,7 +21,7 @@ namespace AI
             std::cout << "Exit Roaming _State" << std::endl;
         }
 
-        void Execute(Context _context) override
+        void Execute(Npc npc, float deltatime, Context _context) override
         {
             
                 

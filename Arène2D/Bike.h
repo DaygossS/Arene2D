@@ -53,11 +53,11 @@ public:
         FightState* fightState = fsm.CreateState<FightState>();
         RoamState* roamState = fsm.CreateState<RoamState>();
 
-        roamState->AddTransition(Conditions::IsClosePlayer(_context, ), fightState);
+        roamState->AddTransition(Conditions::IsClosePlayer(*this, context), fightState);
 
         fightState->AddTransition([](const Context _context)
             {
-                return !Conditions::IsClosePlayer(_context, *this);
+                return !Conditions::IsClosePlayer(*this, context);
             }, roamState);
 
         fsm.Init(roamState, context);
@@ -65,7 +65,7 @@ public:
 
     void update(float deltaTime, std::vector<int> collisions, TrailSystem &trailMask, TrailSystem &trailMask2)
     {
-        fsm.Update(context);
+        fsm.Update(*this, deltatime,context);
 
         ////boucle: 1324 bghd
 

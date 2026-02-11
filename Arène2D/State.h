@@ -14,7 +14,7 @@ namespace FSM
         virtual ~State() = default;
 
         virtual void Enter(ContextType _context) {}
-        virtual void Execute(ContextType _context) {} // Update
+        virtual void Execute(Npc npc,float deltatime,ContextType _context) {} // Update
         virtual void Exit(ContextType _context) {}
 
         void AddTransition(Condition _condition, _State* _newState);
