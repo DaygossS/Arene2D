@@ -146,7 +146,9 @@ int main() {
                 GameOverAction action = gameOverMenu.handleEvent(*event, window);
                 if (action == GameOverAction::Restart) {
                     player.reset(100.f, 300.f);
+                    npc.reset(1000.f, 500.f);
                     trailSystem.reset();
+                    trailSystem2.reset();
                     scoreSystem.reset();
                     hasGameStarted = false;
                     currentState = GAME;
