@@ -63,10 +63,14 @@ int main() {
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
 
     Player player(100.f, 300.f, playerAssets);
+    //TODO: donner des spritesheet aux ia et (des sens (m'en oqp))
     Npc npc(1000.f, 500.f, playerAssets);
+    Npc npc2(1000.f, 800.f, playerAssets);
     npc.Init();
+    npc2.Init();
     TrailSystem trailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
     TrailSystem trailSystem2(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
+    TrailSystem trailSystem3(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
 
 
     ScoreSystem scoreSystem;
@@ -116,6 +120,8 @@ int main() {
                     trailSystem.reset();
                     npc.reset(1000.f, 500.f);
                     trailSystem2.reset();
+                    npc2.reset(1000.f, 800.f);
+                    trailSystem3.reset();
                     scoreSystem.reset();
 
                     audioSystem.playGameMusic(); // <--- JEU
@@ -149,8 +155,10 @@ int main() {
                 if (action == GameOverAction::Restart) {
                     player.reset(100.f, 300.f);
                     npc.reset(1000.f, 500.f);
+                    npc2.reset(1000.f, 800.f);
                     trailSystem.reset();
                     trailSystem2.reset();
+                    trailSystem3.reset();
                     scoreSystem.reset();
                     hasGameStarted = false;
                     currentState = GAME;
@@ -172,28 +180,33 @@ int main() {
         else if (currentState == GAME) {
             player.handleInput();
             player.update(deltaTime);
-            npc.update(deltaTime, collisions, trailSystem, trailSystem2);
+            npc.update(deltaTime, collisions, trailSystem, trailSystem2, trailSystem3);
+            npc2.update(deltaTime, collisions, trailSystem, trailSystem2, trailSystem3);
             scoreSystem.update(deltaTime);
 
             if (!hasGameStarted) {
                 if (player.getVelocity().x != 0 || player.getVelocity().y != 0) {
                     hasGameStarted = true;
-                    npc.setActie(true);
+                    
                 }
             }
 
             if (hasGameStarted) {
                 scoreSystem.update(deltaTime);
+                npc.setActie(true);
+                npc2.setActie(true);
             }
 
             sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
             sf::FloatRect npcBounds = CollisionManager::getHitbox(npc.getPosition(), 8.f);
+            sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2.getPosition(), 8.f);
 
             bool isDead = false;
 
             if (CollisionManager::checkMapCollision(playerBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) isDead = true;
             else if (trailSystem.checkCollision(playerBounds, player.getVelocity())) isDead = true;
             else if (trailSystem2.checkCollision(playerBounds, player.getVelocity())) isDead = true;
+            else if (trailSystem3.checkCollision(playerBounds, player.getVelocity())) isDead = true;
 
             if (isDead) {
                 currentState = GAME_OVER;
@@ -207,18 +220,32 @@ int main() {
             if (CollisionManager::checkMapCollision(npcBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
             else if (trailSystem.checkCollision(npcBounds, npc.getVelocity())) iaDead = true;
             else if (trailSystem2.checkCollision(npcBounds, npc.getVelocity())) iaDead = true;
+            else if (trailSystem3.checkCollision(npcBounds, npc.getVelocity())) iaDead = true;
 
             if (iaDead) {
-                trailSystem.reset();
                 npc.reset(1000.f, 500.f);
                 trailSystem2.reset();
                 scoreSystem.addKill();
-                
+
+            }
+            iaDead = false;
+
+            if (CollisionManager::checkMapCollision(npc2Bounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
+            else if (trailSystem.checkCollision(npc2Bounds, npc2.getVelocity())) iaDead = true;
+            else if (trailSystem2.checkCollision(npc2Bounds, npc2.getVelocity())) iaDead = true;
+            else if (trailSystem3.checkCollision(npc2Bounds, npc2.getVelocity())) iaDead = true;
+
+            if (iaDead) {
+                npc2.reset(1000.f, 800.f);
+                trailSystem3.reset();
+                scoreSystem.addKill();
+
             }
 
 
             trailSystem.addTrail(player.getPosition(), sf::Color::White);
             trailSystem2.addTrail(npc.getPosition(), sf::Color::Red);
+            trailSystem3.addTrail(npc2.getPosition(), sf::Color::Blue);
         }
         else if (currentState == PAUSE) {
             pauseMenu.update();
@@ -250,6 +277,8 @@ int main() {
             player.draw(window);
             trailSystem2.draw(window);
             npc.draw(window);
+            trailSystem3.draw(window);
+            npc2.draw(window);
 
             if (currentState == GAME && showHitbox) {
                 sf::FloatRect currentBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);

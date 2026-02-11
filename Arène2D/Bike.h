@@ -68,7 +68,7 @@ public:
         fsm.Init(roamState, context);
     }
 
-    void update(float deltaTime, std::vector<int> collisions, TrailSystem& trailMask, TrailSystem& trailMask2)
+    void update(float deltaTime, std::vector<int> collisions, TrailSystem& trailMask, TrailSystem& trailMask2, TrailSystem& trailMask3)
     {
         if (activate){
             fsm.Update(context);
@@ -122,6 +122,9 @@ public:
             else if (trailMask2.checkCollision(IaBounds, m_velocity)) {
                 willdie = true;
             }
+            else if (trailMask3.checkCollision(IaBounds, m_velocity)) {
+                willdie = true;
+            }
 
 
             int trie = 0;
@@ -155,6 +158,9 @@ public:
                     willdie = true;
                 }
                 else if (trailMask2.checkCollision(IaBounds, m_velocity)) {
+                    willdie = true;
+                }
+                else if (trailMask3.checkCollision(IaBounds, m_velocity)) {
                     willdie = true;
                 }
                 else { willdie = false; }
