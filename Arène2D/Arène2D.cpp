@@ -253,7 +253,6 @@ int main() {
 
             sf::Color playercol = sf::Color::White;
             if (mainMenu.m_optionsMenu.getrainbow()) {
-                std::cout << ticks << std::endl;
                 playercol = rainbowing(ticks);
             }
             trailSystem.addTrail(player.getPosition(), playercol);

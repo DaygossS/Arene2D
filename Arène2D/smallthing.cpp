@@ -11,31 +11,32 @@ inline sf::Color rainbowing(float& ticks) {
         coloring.g = 0;
         coloring.b = 255 - tick;
     }
-    else if (ticks <= 511 && ticks > 255) {
+    else if (ticks <= 511 ) {
         float tick = ticks - 255;
         coloring.r = 255;
         coloring.g = tick;
         coloring.b = 0;
     }
-    else if (ticks <= 727 && ticks > 511) {
+    else if (ticks <= 727) {
         float tick = ticks - 511;
         coloring.r = 255 - tick;
         coloring.g = 255;
         coloring.b = 0;
     }
-    else if (ticks <= 1023 && ticks > 727) {
+    //why do you glitch???
+    else if (ticks <= 1023 ) {
         float tick = ticks - 727;
         coloring.r = 0;
         coloring.g = 255;
         coloring.b = tick;
     }
-    else if (ticks <= 1279 && ticks > 1023) {
+    else if (ticks <= 1279 ) {
         float tick = ticks - 1023;
         coloring.r = 0;
         coloring.g = 255 - tick;
         coloring.b = 255;
     }
-    else if (ticks <= 1535 && ticks > 1279) {
+    else if (ticks <= 1535) {
         float tick = ticks - 1279;
         coloring.r = tick;
         coloring.g = 0;
