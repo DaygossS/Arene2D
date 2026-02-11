@@ -9,7 +9,6 @@
 #include "ScoreSystem.hpp"
 #include "MainMenu.hpp"
 #include "OptionsMenu.hpp"
-#include "Bike.cpp"
 #include "PauseMenu.hpp"
 #include "GameOverMenu.hpp" 
 #include "AudioSystem.hpp"
@@ -20,6 +19,7 @@ const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 const int HUD_HEIGHT = 60;
 
+#include "Bike.cpp"
 enum GameState { MENU, GAME, PAUSE, OPTIONS, GAME_OVER };
 
 static void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
@@ -247,7 +247,7 @@ int main() {
             npc.draw(window);
 
             if (currentState == GAME && showHitbox) {
-                sf::FloatRect currentBounds = CollisionManager::getHitbox(player.getPosition(), 20.f);
+                sf::FloatRect currentBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
                 CollisionManager::drawHitbox(window, currentBounds, sf::Color::Red);
             }
 
