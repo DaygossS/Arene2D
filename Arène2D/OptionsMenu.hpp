@@ -15,7 +15,7 @@ public:
 
     float getMusicVolume() const { return s_musicVolume; }
     float getSfxVolume() const { return s_sfxVolume; }
-
+    bool getinvincible() { return invincible; }
     bool getspeedy() const { return speedy; }
     bool getslow() const { return slow; }
     bool getrainbow() const { return rainbow; }
@@ -61,4 +61,5 @@ private:
     bool slow = false;
     bool rainbow = false;
     bool specialSkin = false;
+    bool invincible;
 };

@@ -11,6 +11,7 @@ float OptionsMenu::s_sfxVolume = 0.5f;
 OptionsMenu::OptionsMenu()
     : m_windowWidth(0.f), m_windowHeight(0.f),
     m_isPauseMode(false),
+    invincible(false),
     m_currentTab(TAB_VOLUME),
     m_isDraggingMusic(false), m_isDraggingSfx(false),
     m_tabVolumeText(m_font),
@@ -184,22 +185,27 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
 
             if (m_currentTab == TAB_CODE) {
                 if (m_validateBtnText.getGlobalBounds().contains(mousePosF)) {
-                    if (m_inputString == "SPEEDY") {
+                    if (m_inputString == "speedy") {
                         speedy = !speedy;
                         m_feedbackText.setString(speedy ? "Vitesse activee !" : "Vitesse desactivee");
                         m_feedbackText.setFillColor(sf::Color::Green);
                     }
-                    else if (m_inputString == "SLOW") {
+                    else if (m_inputString == "slow") {
                         slow = !slow;
                         m_feedbackText.setString(slow ? "Ralenti active !" : "Ralenti desactive");
                         m_feedbackText.setFillColor(sf::Color::Green);
                     }
-                    else if (m_inputString == "RAINBOW") {
+                    else if (m_inputString == "test") {
+                        invincible = !invincible;
+                        m_feedbackText.setString(invincible ? "Mode testeur actif !" : "Mode testeur inactif");
+                        m_feedbackText.setFillColor(sf::Color::Green);
+                    }
+                    else if (m_inputString == "rainbow") {
                         rainbow = !rainbow;
                         m_feedbackText.setString(rainbow ? "Rainbow active !" : "Rainbow desactive");
                         m_feedbackText.setFillColor(sf::Color::Green);
                     }
-                    else if (m_inputString == "SKIN") {
+                    else if (m_inputString == "skin") {
                         specialSkin = !specialSkin;
                         m_feedbackText.setString(specialSkin ? "Skin Special active !" : "Skin par defaut");
                         m_feedbackText.setFillColor(sf::Color::Cyan);

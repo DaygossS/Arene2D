@@ -255,10 +255,12 @@ void Game::update(float deltaTime) {
 
         bool isDead = false;
 
-        if (CollisionManager::checkMapCollision(playerBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) isDead = true;
-        else if (trailSystem->checkCollision(playerBounds, player->getVelocity())) isDead = true;
-        else if (trailSystem2->checkCollision(playerBounds, player->getVelocity())) isDead = true;
-        else if (trailSystem3->checkCollision(playerBounds, player->getVelocity())) isDead = true;
+        if (!mainMenu->m_optionsMenu.getinvincible()) {
+            if (CollisionManager::checkMapCollision(playerBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) isDead = true;
+            else if (trailSystem->checkCollision(playerBounds, player->getVelocity())) isDead = true;
+            else if (trailSystem2->checkCollision(playerBounds, player->getVelocity())) isDead = true;
+            else if (trailSystem3->checkCollision(playerBounds, player->getVelocity())) isDead = true;
+        }
 
         if (isDead) {
             currentState = GAME_OVER;
@@ -297,7 +299,7 @@ void Game::update(float deltaTime) {
         sf::Color playercol = sf::Color::White;
 
         if (isSpecialSkinActive) {
-            playercol = sf::Color::Cyan;
+            playercol = sf::Color::White;
         }
 
         if (mainMenu->m_optionsMenu.getrainbow()) {
