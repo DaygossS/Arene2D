@@ -38,6 +38,8 @@ void AudioSystem::update() {
         return s.getStatus() == sf::SoundSource::Status::Stopped;
         });
 
+    // Si on est en jeu et que la musique s'arrête (fin de la playlist), on en lance une autre
+    // Sauf si elle est en PAUSE (car Status::Paused != Status::Stopped)
     if (m_currentState == MusicState::Game && m_music.getStatus() == sf::SoundSource::Status::Stopped) {
         playRandomTrack(m_gamePlaylist);
     }
@@ -47,14 +49,21 @@ void AudioSystem::setGlobalVolume(float musicVolume, float sfxVolume) {
     m_currentMusicVolume = musicVolume;
     m_currentSfxVolume = sfxVolume;
 
+    // Met à jour la musique principale si elle joue
     if (m_music.getStatus() != sf::SoundSource::Status::Stopped) {
         m_music.setVolume(m_currentMusicVolume);
+    }
+
+    // Met à jour la musique de pause si elle joue
+    if (m_pauseMusicChannel.getStatus() != sf::SoundSource::Status::Stopped) {
+        m_pauseMusicChannel.setVolume(m_currentMusicVolume);
     }
 }
 
 void AudioSystem::playMenuMusic() {
     if (m_currentState == MusicState::Menu) return;
 
+    // Pour le menu, on utilise le canal principal
     if (m_music.openFromFile(m_menuTheme)) {
         m_music.setLooping(true);
         m_music.setVolume(m_currentMusicVolume);
@@ -66,23 +75,52 @@ void AudioSystem::playMenuMusic() {
 void AudioSystem::playGameMusic() {
     if (m_currentState == MusicState::Game) return;
 
+    // LOGIQUE DE REPRISE (RESUME)
+    if (m_currentState == MusicState::Pause) {
+        // 1. On arrête la musique du menu pause
+        m_pauseMusicChannel.stop();
+
+        // 2. On reprend la musique du jeu (si elle était en pause)
+        if (m_music.getStatus() == sf::SoundSource::Status::Paused) {
+            m_music.play(); // Reprend exactement où elle s'était arrêtée
+        }
+        else {
+            // Sécurité : si jamais elle n'était pas chargée, on en lance une neuve
+            playRandomTrack(m_gamePlaylist);
+        }
+    }
+    else {
+        // Si on vient du Menu principal ou d'un Game Over, on lance une nouvelle track
+        playRandomTrack(m_gamePlaylist);
+    }
+
     m_currentState = MusicState::Game;
-    playRandomTrack(m_gamePlaylist);
 }
 
 void AudioSystem::playPauseMusic() {
     if (m_currentState == MusicState::Pause) return;
 
-    if (m_music.openFromFile(m_pauseTheme)) {
-        m_music.setLooping(true);
-        m_music.setVolume(m_currentMusicVolume);
-        m_music.play();
-        m_currentState = MusicState::Pause;
+    // LOGIQUE DE MISE EN PAUSE
+    if (m_currentState == MusicState::Game) {
+        // On met la musique du jeu en PAUSE (ne pas faire stop() sinon on perd la position)
+        m_music.pause();
     }
+
+    // On lance la musique de pause sur le DEUXIÈME canal
+    if (m_pauseMusicChannel.openFromFile(m_pauseTheme)) {
+        m_pauseMusicChannel.setLooping(true);
+        m_pauseMusicChannel.setVolume(m_currentMusicVolume);
+        m_pauseMusicChannel.play();
+    }
+
+    m_currentState = MusicState::Pause;
 }
 
 void AudioSystem::playGameOverMusic() {
     if (m_currentState == MusicState::GameOver) return;
+
+    // On s'assure que tout le reste est coupé
+    m_pauseMusicChannel.stop();
 
     if (m_music.openFromFile(m_gameOverTheme)) {
         m_music.setLooping(false);
@@ -94,6 +132,8 @@ void AudioSystem::playGameOverMusic() {
 
 void AudioSystem::playVictoryMusic() {
     if (m_currentState == MusicState::Victory) return;
+
+    m_pauseMusicChannel.stop();
 
     m_currentState = MusicState::Victory;
     playRandomTrack(m_victoryPlaylist);
@@ -109,6 +149,7 @@ void AudioSystem::playSound(const std::string& key) {
 
 void AudioSystem::stopMusic() {
     m_music.stop();
+    m_pauseMusicChannel.stop();
     m_currentState = MusicState::None;
 }
 
