@@ -16,11 +16,13 @@ public:
     float getMusicVolume() const { return s_musicVolume; }
     float getSfxVolume() const { return s_sfxVolume; }
 
-
     bool getspeedy() { return speedy; }
     bool getslow() { return slow; }
     bool getrainbow() { return rainbow; }
+
 private:
+    void updateSliderValue(float mouseX, float& volumeVar, const sf::RectangleShape& track);
+
     sf::Font m_font;
     float m_windowWidth;
     float m_windowHeight;
@@ -49,16 +51,10 @@ private:
     std::string m_inputString;
     sf::Text m_inputText;
     sf::RectangleShape m_inputBox;
-
     sf::Text m_validateBtnText;
-    sf::RectangleShape m_validateBtnShape;
     sf::Text m_feedbackText;
 
     sf::Text m_backButton;
-
-    void alignSlider(float volume, sf::RectangleShape& track, sf::CircleShape& handle);
-    void updateSliderValue(float mouseX, float& volume, const sf::RectangleShape& track);
-
 
     bool speedy = false;
     bool slow = false;
