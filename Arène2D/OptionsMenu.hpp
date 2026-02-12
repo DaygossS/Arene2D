@@ -12,7 +12,7 @@ public:
     void draw(sf::RenderWindow& window);
 
     void setIsPauseMode(bool active);
-
+    bool getArcadeMode() { return arcadeMode; }
     float getMusicVolume() const { return s_musicVolume; }
     float getSfxVolume() const { return s_sfxVolume; }
     bool getinvincible() { return invincible; }
@@ -62,4 +62,5 @@ private:
     bool rainbow = false;
     bool specialSkin = false;
     bool invincible;
+    bool arcadeMode;
 };

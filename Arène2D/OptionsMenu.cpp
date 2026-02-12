@@ -12,6 +12,7 @@ OptionsMenu::OptionsMenu()
     : m_windowWidth(0.f), m_windowHeight(0.f),
     m_isPauseMode(false),
     invincible(false),
+    arcadeMode(false),
     m_currentTab(TAB_VOLUME),
     m_isDraggingMusic(false), m_isDraggingSfx(false),
     m_tabVolumeText(m_font),
@@ -209,6 +210,11 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                         specialSkin = !specialSkin;
                         m_feedbackText.setString(specialSkin ? "Skin Special active !" : "Skin par defaut");
                         m_feedbackText.setFillColor(sf::Color::Cyan);
+                    }
+                    else if (m_inputString == "arcade") {
+                        arcadeMode = !arcadeMode;
+                        m_feedbackText.setString(arcadeMode ? "Mode arcade" : "Mode normal");
+                        m_feedbackText.setFillColor(sf::Color::Green);
                     }
                     else {
                         m_feedbackText.setString("Code invalide");

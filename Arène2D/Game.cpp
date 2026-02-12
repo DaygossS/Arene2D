@@ -127,9 +127,13 @@ void Game::resetLevel() {
     trailSystem->reset();
 
     npc->reset(1536.f, 64.f);
+    npc->setActie(true);
     trailSystem2->reset();
+
     npc2->reset(1536.f, 834.f);
+    npc2->setActie(true);
     trailSystem3->reset();
+
     scoreSystem.reset();
 
     audioSystem.playGameMusic();
@@ -220,7 +224,6 @@ void Game::update(float deltaTime) {
     else if (currentState == GAME) {
 
         bool skinActive = mainMenu->m_optionsMenu.getSpecialSkin();
-
         if (skinActive != isSpecialSkinActive) {
             isSpecialSkinActive = skinActive;
             if (isSpecialSkinActive) {
@@ -233,8 +236,21 @@ void Game::update(float deltaTime) {
 
         player->handleInput();
         player->update(deltaTime);
-        npc->update(deltaTime, collisions, *trailSystem, *trailSystem2, *trailSystem3);
-        npc2->update(deltaTime, collisions, *trailSystem, *trailSystem2, *trailSystem3);
+
+        // --- CORRECTION: NPC ATTENDENT QUE hasGameStarted SOIT VRAI ---
+        if (hasGameStarted) {
+            if (npc->getActive()) {
+                npc->update(deltaTime, collisions, *trailSystem, *trailSystem2, *trailSystem3);
+            }
+            if (npc2->getActive()) {
+                npc2->update(deltaTime, collisions, *trailSystem, *trailSystem2, *trailSystem3);
+            }
+
+            // On s'assure qu'ils sont marqués "Actie" pour leur FSM interne
+            if (npc->getActive()) npc->setActie(true);
+            if (npc2->getActive()) npc2->setActie(true);
+        }
+
         scoreSystem.update(deltaTime);
 
         if (!hasGameStarted) {
@@ -243,23 +259,14 @@ void Game::update(float deltaTime) {
             }
         }
 
-        if (hasGameStarted) {
-            scoreSystem.update(deltaTime);
-            npc->setActie(true);
-            npc2->setActie(true);
-        }
-
         sf::FloatRect playerBounds = CollisionManager::getHitbox(player->getPosition(), 18.f);
-        sf::FloatRect npcBounds = CollisionManager::getHitbox(npc->getPosition(), 18.f);
-        sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2->getPosition(), 18.f);
 
         bool isDead = false;
-
         if (!mainMenu->m_optionsMenu.getinvincible()) {
             if (CollisionManager::checkMapCollision(playerBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) isDead = true;
             else if (trailSystem->checkCollision(playerBounds, player->getVelocity())) isDead = true;
-            else if (trailSystem2->checkCollision(playerBounds, player->getVelocity())) isDead = true;
-            else if (trailSystem3->checkCollision(playerBounds, player->getVelocity())) isDead = true;
+            else if (npc->getActive() && trailSystem2->checkCollision(playerBounds, player->getVelocity())) isDead = true;
+            else if (npc2->getActive() && trailSystem3->checkCollision(playerBounds, player->getVelocity())) isDead = true;
         }
 
         if (isDead) {
@@ -269,62 +276,83 @@ void Game::update(float deltaTime) {
             audioSystem.playSound("DEATH_PLAYER");
         }
 
-        bool iaDead = false;
+        bool isArcade = mainMenu->m_optionsMenu.getArcadeMode();
 
-        if (CollisionManager::checkMapCollision(npcBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
-        else if (trailSystem->checkCollision(npcBounds, npc->getVelocity())) iaDead = true;
-        else if (trailSystem2->checkCollision(npcBounds, npc->getVelocity())) iaDead = true;
-        else if (trailSystem3->checkCollision(npcBounds, npc->getVelocity())) iaDead = true;
+        if (npc->getActive()) {
+            sf::FloatRect npcBounds = CollisionManager::getHitbox(npc->getPosition(), 18.f);
+            bool iaDead = false;
 
-        if (iaDead) {
-            npc->reset(1536.f, 64.f);
-            trailSystem2->reset();
-            scoreSystem.addKill();
-            audioSystem.playSound("DEATH_NPC");
+            if (CollisionManager::checkMapCollision(npcBounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
+            else if (trailSystem->checkCollision(npcBounds, npc->getVelocity())) iaDead = true;
+            else if (trailSystem2->checkCollision(npcBounds, npc->getVelocity())) iaDead = true;
+            else if (npc2->getActive() && trailSystem3->checkCollision(npcBounds, npc->getVelocity())) iaDead = true;
+
+            if (iaDead) {
+                scoreSystem.addKill();
+                audioSystem.playSound("DEATH_NPC");
+                trailSystem2->reset();
+
+                if (isArcade) {
+                    npc->reset(1536.f, 64.f);
+                    // IMPORTANT: en Arcade, reset() ne remet pas setActie(false) 
+                    // mais dans le doute on force
+                    npc->setActie(true);
+                }
+                else {
+                    npc->setActie(false);
+                }
+            }
         }
-        iaDead = false;
 
-        if (CollisionManager::checkMapCollision(npc2Bounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
-        else if (trailSystem->checkCollision(npc2Bounds, npc2->getVelocity())) iaDead = true;
-        else if (trailSystem2->checkCollision(npc2Bounds, npc2->getVelocity())) iaDead = true;
-        else if (trailSystem3->checkCollision(npc2Bounds, npc2->getVelocity())) iaDead = true;
+        if (npc2->getActive()) {
+            sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2->getPosition(), 18.f);
+            bool iaDead = false;
 
-        if (iaDead) {
-            npc2->reset(1536.f, 834.f);
-            trailSystem3->reset();
-            scoreSystem.addKill();
-            audioSystem.playSound("DEATH_NPC");
+            if (CollisionManager::checkMapCollision(npc2Bounds, collisions, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)) iaDead = true;
+            else if (trailSystem->checkCollision(npc2Bounds, npc2->getVelocity())) iaDead = true;
+            else if (npc->getActive() && trailSystem2->checkCollision(npc2Bounds, npc2->getVelocity())) iaDead = true;
+            else if (trailSystem3->checkCollision(npc2Bounds, npc2->getVelocity())) iaDead = true;
+
+            if (iaDead) {
+                scoreSystem.addKill();
+                audioSystem.playSound("DEATH_NPC");
+                trailSystem3->reset();
+
+                if (isArcade) {
+                    npc2->reset(1536.f, 834.f);
+                    npc2->setActie(true);
+                }
+                else {
+                    npc2->setActie(false);
+                }
+            }
+        }
+
+        if (!isArcade) {
+            if (!npc->getActive() && !npc2->getActive()) {
+                currentState = GAME_OVER;
+                gameOverMenu->setState(true, scoreSystem.getScore());
+                audioSystem.playGameOverMusic();
+            }
         }
 
         sf::Color playercol = sf::Color::White;
-
-        if (isSpecialSkinActive) {
-            playercol = sf::Color::White;
-        }
-
-        if (mainMenu->m_optionsMenu.getrainbow()) {
-            playercol = rainbowing(ticks);
-        }
+        if (isSpecialSkinActive) playercol = sf::Color::Cyan;
+        if (mainMenu->m_optionsMenu.getrainbow()) playercol = rainbowing(ticks);
 
         trailSystem->addTrail(player->getPosition(), playercol);
-        trailSystem2->addTrail(npc->getPosition(), sf::Color::Yellow);
-        trailSystem3->addTrail(npc2->getPosition(), sf::Color::Magenta);
 
-        if (mainMenu->m_optionsMenu.getspeedy()) {
-            player->setSpeed(600.f);
-            npc->setSpeed(600.f);
-            npc2->setSpeed(600.f);
-        }
-        else if (mainMenu->m_optionsMenu.getslow()) {
-            player->setSpeed(150.f);
-            npc->setSpeed(150.f);
-            npc2->setSpeed(150.f);
-        }
-        else {
-            player->setSpeed(300.f);
-            npc->setSpeed(300.f);
-            npc2->setSpeed(300.f);
-        }
+        if (npc->getActive()) trailSystem2->addTrail(npc->getPosition(), sf::Color::Yellow);
+        if (npc2->getActive()) trailSystem3->addTrail(npc2->getPosition(), sf::Color::Magenta);
+
+        float currentSpeed = 300.f;
+        if (mainMenu->m_optionsMenu.getspeedy()) currentSpeed = 600.f;
+        else if (mainMenu->m_optionsMenu.getslow()) currentSpeed = 150.f;
+
+        player->setSpeed(currentSpeed);
+        if (npc->getActive()) npc->setSpeed(currentSpeed);
+        if (npc2->getActive()) npc2->setSpeed(currentSpeed);
+
         ticks += 100.f * deltaTime;
     }
     else if (currentState == PAUSE) {
@@ -357,20 +385,26 @@ void Game::render() {
         }
         trailSystem->draw(window);
         player->draw(window);
+
         trailSystem2->draw(window);
-        npc->draw(window);
+        if (npc->getActive()) npc->draw(window);
+
         trailSystem3->draw(window);
-        npc2->draw(window);
+        if (npc2->getActive()) npc2->draw(window);
 
         if (currentState == GAME && showHitbox) {
             sf::FloatRect playerBounds = CollisionManager::getHitbox(player->getPosition(), 18.f);
             CollisionManager::drawHitbox(window, playerBounds, sf::Color::Red);
 
-            sf::FloatRect npcBounds = CollisionManager::getHitbox(npc->getPosition(), 18.f);
-            CollisionManager::drawHitbox(window, npcBounds, sf::Color::Red);
+            if (npc->getActive()) {
+                sf::FloatRect npcBounds = CollisionManager::getHitbox(npc->getPosition(), 18.f);
+                CollisionManager::drawHitbox(window, npcBounds, sf::Color::Red);
+            }
 
-            sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2->getPosition(), 18.f);
-            CollisionManager::drawHitbox(window, npc2Bounds, sf::Color::Red);
+            if (npc2->getActive()) {
+                sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2->getPosition(), 18.f);
+                CollisionManager::drawHitbox(window, npc2Bounds, sf::Color::Red);
+            }
         }
 
         if (currentState == PAUSE) {

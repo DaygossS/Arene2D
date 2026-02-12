@@ -32,17 +32,16 @@ AudioSystem::AudioSystem()
 bool AudioSystem::init() {
     bool success = true;
 
-    // Chargement du son de mort du Joueur
     if (!m_soundBuffers["DEATH_PLAYER"].loadFromFile("../Assets/SoundEffects/Death.wav")) {
         std::cerr << "Erreur: Impossible de charger Death.wav" << std::endl;
         success = false;
     }
 
-    // Chargement du son de mort des NPCs
     if (!m_soundBuffers["DEATH_NPC"].loadFromFile("../Assets/SoundEffects/Death.wav")) {
         std::cerr << "Erreur: Impossible de charger Death.wav" << std::endl;
         success = false;
     }
+
     if (!m_soundBuffers["CLICK"].loadFromFile("../Assets/SoundEffects/Click.wav")) {
         std::cerr << "Erreur: Impossible de charger Click.wav" << std::endl;
         success = false;
@@ -68,6 +67,7 @@ void AudioSystem::setGlobalVolume(float musicVolume, float sfxVolume) {
     if (m_music.getStatus() != sf::SoundSource::Status::Stopped) {
         m_music.setVolume(m_currentMusicVolume);
     }
+
     if (m_pauseMusicChannel.getStatus() != sf::SoundSource::Status::Stopped) {
         m_pauseMusicChannel.setVolume(m_currentMusicVolume);
     }
@@ -75,6 +75,9 @@ void AudioSystem::setGlobalVolume(float musicVolume, float sfxVolume) {
 
 void AudioSystem::playMenuMusic() {
     if (m_currentState == MusicState::Menu) return;
+
+    // CORRECTION ICI : On s'assure que la musique de pause est coupée
+    m_pauseMusicChannel.stop();
 
     if (m_music.openFromFile(m_menuTheme)) {
         m_music.setLooping(true);
@@ -89,6 +92,7 @@ void AudioSystem::playGameMusic() {
 
     if (m_currentState == MusicState::Pause) {
         m_pauseMusicChannel.stop();
+
         if (m_music.getStatus() == sf::SoundSource::Status::Paused) {
             m_music.play();
         }
@@ -141,9 +145,7 @@ void AudioSystem::playVictoryMusic() {
     playRandomTrack(m_victoryPlaylist);
 }
 
-// MODIFICATION : Lecture d'un son
 void AudioSystem::playSound(const std::string& key) {
-    // On vérifie que le son a bien été chargé dans init()
     if (m_soundBuffers.count(key)) {
         m_activeSounds.emplace_back(m_soundBuffers[key]);
         m_activeSounds.back().setVolume(m_currentSfxVolume);
