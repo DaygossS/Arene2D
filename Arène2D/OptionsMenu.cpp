@@ -198,7 +198,7 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
 
                     }
                     else if (m_inputString == "rainbow") {
-                        if (!slow) {
+                        if (!rainbow) {
                             m_feedbackText.setString("Code Accepte : Mode rainbow !");
                             m_feedbackText.setFillColor(sf::Color::Green);
                             rainbow = true;
