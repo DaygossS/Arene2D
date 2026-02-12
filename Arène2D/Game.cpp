@@ -6,6 +6,7 @@ Game::Game()
     showHitbox(false),
     hasGameStarted(false),
     currentState(MENU),
+    isSpecialSkinActive(false),
     totalWidth(MAP_WIDTH* TILE_SIZE),
     gameHeight(MAP_HEIGHT* TILE_SIZE),
     totalHeight(gameHeight + HUD_HEIGHT),
@@ -32,7 +33,18 @@ Game::Game()
         !pD.loadFromFile("../Assets/Player/playerD.png")) {
         std::cout << "Erreur chargement textures joueur" << std::endl;
     }
-    PlayerTextures playerAssets = { pZ, pS, pQ, pD };
+    playerAssetsDefault = { &pZ, &pS, &pQ, &pD };
+
+    if (!pSpecZ.loadFromFile("../Assets/Player/SKINZ.png") ||
+        !pSpecS.loadFromFile("../Assets/Player/SKINS.png") ||
+        !pSpecQ.loadFromFile("../Assets/Player/SKINQ.png") ||
+        !pSpecD.loadFromFile("../Assets/Player/SKIND.png")) {
+        std::cout << "Erreur chargement textures joueur SPECIAL (Fichiers manquants ?), fallback sur normal" << std::endl;
+        playerAssetsSpecial = playerAssetsDefault;
+    }
+    else {
+        playerAssetsSpecial = { &pSpecZ, &pSpecS, &pSpecQ, &pSpecD };
+    }
 
     if (!e1Z.loadFromFile("../Assets/Npc/Npc1Z.png") ||
         !e1S.loadFromFile("../Assets/Npc/Npc1S.png") ||
@@ -40,7 +52,7 @@ Game::Game()
         !e1D.loadFromFile("../Assets/Npc/Npc1D.png")) {
         std::cout << "Erreur chargement textures NPC 1" << std::endl;
     }
-    PlayerTextures npc1Assets = { e1Z, e1S, e1Q, e1D };
+    PlayerTextures npc1Assets = { &e1Z, &e1S, &e1Q, &e1D };
 
     if (!e2Z.loadFromFile("../Assets/Npc/Npc2Z.png") ||
         !e2S.loadFromFile("../Assets/Npc/Npc2S.png") ||
@@ -48,12 +60,12 @@ Game::Game()
         !e2D.loadFromFile("../Assets/Npc/Npc2D.png")) {
         std::cout << "Erreur chargement textures NPC 2" << std::endl;
     }
-    PlayerTextures npc2Assets = { e2Z, e2S, e2Q, e2D };
+    PlayerTextures npc2Assets = { &e2Z, &e2S, &e2Q, &e2D };
 
     map.resize(MAP_WIDTH * MAP_HEIGHT, 0);
     collisions.resize(MAP_WIDTH * MAP_HEIGHT, 0);
 
-    player = new Player(100.f, 300.f, playerAssets);
+    player = new Player(100.f, 300.f, playerAssetsDefault);
 
     npc = new Npc(100.f, 300.f, npc1Assets);
     npc->Init();
@@ -104,6 +116,14 @@ void Game::openMap(const std::string& filename) {
 void Game::resetLevel() {
     hasGameStarted = false;
     player->reset(64.f, 448.f);
+
+    if (mainMenu->m_optionsMenu.getSpecialSkin()) {
+        player->setTextures(playerAssetsSpecial);
+    }
+    else {
+        player->setTextures(playerAssetsDefault);
+    }
+
     trailSystem->reset();
 
     npc->reset(1536.f, 64.f);
@@ -135,17 +155,10 @@ void Game::processEvents() {
     while (const auto event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) window.close();
 
-        // NOTE SUR LA LATENCE : Si le son a du retard, vérifiez votre fichier .wav
-        // Il y a souvent du silence au début du fichier audio qu'il faut couper (avec Audacity par exemple).
-
         if (currentState == MENU) {
             int action = mainMenu->handleInput(window, *event);
-
-            // Si action != 0, c'est qu'un bouton a été cliqué.
-            // On joue le son AVANT de charger la map pour réduire la latence perçue.
             if (action != 0) {
                 audioSystem.playSound("CLICK");
-
                 if (action == 1) {
                     std::string levelFile = mainMenu->getSelectedLevelFile();
                     openMap(levelFile);
@@ -153,7 +166,6 @@ void Game::processEvents() {
                     resetLevel();
                 }
                 if (action == 3) window.close();
-                // Action 10 = Navigation (Options, Retour...), on joue juste le son.
             }
         }
         else if (currentState == GAME) {
@@ -168,10 +180,8 @@ void Game::processEvents() {
         }
         else if (currentState == PAUSE) {
             int action = pauseMenu->handleInput(window, *event);
-
             if (action != 0) {
                 audioSystem.playSound("CLICK");
-
                 if (action == 1) {
                     currentState = GAME;
                     audioSystem.playGameMusic();
@@ -185,10 +195,8 @@ void Game::processEvents() {
         }
         else if (currentState == GAME_OVER) {
             GameOverAction action = gameOverMenu->handleEvent(*event, window);
-
             if (action != GameOverAction::None) {
                 audioSystem.playSound("CLICK");
-
                 if (action == GameOverAction::Restart) {
                     resetLevel();
                     hasGameStarted = false;
@@ -210,6 +218,19 @@ void Game::update(float deltaTime) {
         mainMenu->update(deltaTime);
     }
     else if (currentState == GAME) {
+
+        bool skinActive = mainMenu->m_optionsMenu.getSpecialSkin();
+
+        if (skinActive != isSpecialSkinActive) {
+            isSpecialSkinActive = skinActive;
+            if (isSpecialSkinActive) {
+                player->setTextures(playerAssetsSpecial);
+            }
+            else {
+                player->setTextures(playerAssetsDefault);
+            }
+        }
+
         player->handleInput();
         player->update(deltaTime);
         npc->update(deltaTime, collisions, *trailSystem, *trailSystem2, *trailSystem3);
@@ -274,9 +295,15 @@ void Game::update(float deltaTime) {
         }
 
         sf::Color playercol = sf::Color::White;
+
+        if (isSpecialSkinActive) {
+            playercol = sf::Color::Cyan;
+        }
+
         if (mainMenu->m_optionsMenu.getrainbow()) {
             playercol = rainbowing(ticks);
         }
+
         trailSystem->addTrail(player->getPosition(), playercol);
         trailSystem2->addTrail(npc->getPosition(), sf::Color::Yellow);
         trailSystem3->addTrail(npc2->getPosition(), sf::Color::Magenta);

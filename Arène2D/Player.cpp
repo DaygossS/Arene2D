@@ -1,28 +1,22 @@
 #include "Player.hpp"
 
-
 Player::Player(float startX, float startY, const PlayerTextures& texture)
-    : textures(texture), sprite(texture.right)
+    : textures(texture), sprite(*texture.right)
 {
-    
-    sprite.setTexture(textures.right, true);
-
+    sprite.setTexture(*textures.right, true);
     sprite.setScale({ 0.3f, 0.3f });
     sprite.setPosition({ startX, startY });
 
     m_speed = 300.f;
     m_velocity = { 0.f, 0.f };
 
-    
     updateOrigin();
 }
 
 void Player::reset(float startX, float startY) {
     sprite.setPosition({ startX, startY });
     m_velocity = { 0.f, 0.f };
-
-    
-    sprite.setTexture(textures.right, true);
+    sprite.setTexture(*textures.right, true);
     updateOrigin();
 }
 
@@ -33,33 +27,32 @@ void Player::handleInput() {
         && (m_velocity.y != 1.f)) {
         m_velocity.y = -1.f;
         m_velocity.x = 0.f;
-        
-        sprite.setTexture(textures.up, true);
+
+        sprite.setTexture(*textures.up, true);
         textureChanged = true;
     }
     else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Down))
         && (m_velocity.y != -1.f)) {
         m_velocity.y = 1.f;
         m_velocity.x = 0.f;
-        sprite.setTexture(textures.down, true); 
+        sprite.setTexture(*textures.down, true);
         textureChanged = true;
     }
     else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Left))
         && (m_velocity.x != 1.f)) {
         m_velocity.x = -1.f;
         m_velocity.y = 0.f;
-        sprite.setTexture(textures.left, true); 
+        sprite.setTexture(*textures.left, true);
         textureChanged = true;
     }
     else if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Right))
         && (m_velocity.x != -1.f)) {
         m_velocity.x = 1.f;
         m_velocity.y = 0.f;
-        sprite.setTexture(textures.right, true); 
+        sprite.setTexture(*textures.right, true);
         textureChanged = true;
     }
 
-   
     if (textureChanged) {
         updateOrigin();
     }
@@ -77,20 +70,16 @@ sf::FloatRect Player::getBounds() const {
     return sprite.getGlobalBounds();
 }
 
-
 void Player::updateOrigin() {
     sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
 }
 
-
-
-
-
-
-
-
-
-
-
-
+void Player::setTextures(const PlayerTextures& newTextures) {
+    textures = newTextures;
+    if (m_velocity.y < 0) sprite.setTexture(*textures.up, true);
+    else if (m_velocity.y > 0) sprite.setTexture(*textures.down, true);
+    else if (m_velocity.x < 0) sprite.setTexture(*textures.left, true);
+    else if (m_velocity.x > 0) sprite.setTexture(*textures.right, true);
+    else sprite.setTexture(*textures.right, true);
+}

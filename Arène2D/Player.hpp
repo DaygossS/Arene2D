@@ -2,16 +2,15 @@
 #include "SFML/Graphics.hpp"
 
 struct PlayerTextures {
-	const sf::Texture& up;
-	const sf::Texture& down;
-	const sf::Texture& left;
-	const sf::Texture& right;
+	const sf::Texture* up;
+	const sf::Texture* down;
+	const sf::Texture* left;
+	const sf::Texture* right;
 };
 
 class Player
 {
-public :
-
+public:
 	Player(float startX, float startY, const PlayerTextures& texture);
 	sf::FloatRect getBounds() const;
 	void reset(float startX, float startY);
@@ -24,6 +23,8 @@ public :
 	sf::Vector2f getVelocity() const { return m_velocity; }
 
 	void setSpeed(float newfast) { m_speed = newfast; }
+	void setTextures(const PlayerTextures& newTextures);
+
 private:
 	sf::Sprite sprite;
 	sf::Vector2f m_velocity;
@@ -31,4 +32,3 @@ private:
 	PlayerTextures textures;
 	void updateOrigin();
 };
-

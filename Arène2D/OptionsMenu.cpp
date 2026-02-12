@@ -164,7 +164,6 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
 
             if (m_currentTab == TAB_VOLUME) {
                 sf::FloatRect musicHitbox = m_musicTrack.getGlobalBounds();
-                // SFML 3.0 FIX: height -> size.y, top -> position.y
                 musicHitbox.size.y += 20.f;
                 musicHitbox.position.y -= 10.f;
 
@@ -174,7 +173,6 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                 }
 
                 sf::FloatRect sfxHitbox = m_sfxTrack.getGlobalBounds();
-                // SFML 3.0 FIX: height -> size.y, top -> position.y
                 sfxHitbox.size.y += 20.f;
                 sfxHitbox.position.y -= 10.f;
 
@@ -200,6 +198,11 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                         rainbow = !rainbow;
                         m_feedbackText.setString(rainbow ? "Rainbow active !" : "Rainbow desactive");
                         m_feedbackText.setFillColor(sf::Color::Green);
+                    }
+                    else if (m_inputString == "SKIN") {
+                        specialSkin = !specialSkin;
+                        m_feedbackText.setString(specialSkin ? "Skin Special active !" : "Skin par defaut");
+                        m_feedbackText.setFillColor(sf::Color::Cyan);
                     }
                     else {
                         m_feedbackText.setString("Code invalide");

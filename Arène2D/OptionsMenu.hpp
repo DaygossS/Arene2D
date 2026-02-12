@@ -16,9 +16,10 @@ public:
     float getMusicVolume() const { return s_musicVolume; }
     float getSfxVolume() const { return s_sfxVolume; }
 
-    bool getspeedy() { return speedy; }
-    bool getslow() { return slow; }
-    bool getrainbow() { return rainbow; }
+    bool getspeedy() const { return speedy; }
+    bool getslow() const { return slow; }
+    bool getrainbow() const { return rainbow; }
+    bool getSpecialSkin() const { return specialSkin; }
 
 private:
     void updateSliderValue(float mouseX, float& volumeVar, const sf::RectangleShape& track);
@@ -59,4 +60,5 @@ private:
     bool speedy = false;
     bool slow = false;
     bool rainbow = false;
+    bool specialSkin = false;
 };
