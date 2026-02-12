@@ -210,6 +210,19 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                         }
 
                     }
+                    else if (m_inputString == "this code is trickier to have") {
+                        if (!GOD) {
+                            m_feedbackText.setString("Code Accepte : God Mode !");
+                            m_feedbackText.setFillColor(sf::Color::Green);
+                            GOD = true;
+                        }
+                        else {
+                            m_feedbackText.setString("Code Accepte : God Mode Deactive!");
+                            m_feedbackText.setFillColor(sf::Color::Red);
+                            GOD = false;
+                        }
+
+                    }
                     else {
                         m_feedbackText.setString("Code Invalide.");
                         m_feedbackText.setFillColor(sf::Color::White);

@@ -218,7 +218,7 @@ int main() {
             else if (trailSystem2.checkCollision(playerBounds, player.getVelocity())) isDead = true;
             else if (trailSystem3.checkCollision(playerBounds, player.getVelocity())) isDead = true;
 
-            if (isDead) {
+            if (isDead && !mainMenu.m_optionsMenu.getgodmode()) {
                 currentState = GAME_OVER;
                 gameOverMenu.setState(false, scoreSystem.getScore());
 
