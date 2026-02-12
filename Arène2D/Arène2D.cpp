@@ -23,6 +23,7 @@ const int TEXTURE_COLS = 5;
 const int HUD_HEIGHT = 60;
 
 #include "Bike.cpp"
+
 enum GameState { MENU, GAME, PAUSE, OPTIONS, GAME_OVER };
 
 static void openMap(std::vector<int>& mapData, std::vector<int>& colData, const std::string& filename) {
