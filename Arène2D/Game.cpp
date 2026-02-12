@@ -119,8 +119,6 @@ void Game::run() {
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
 
-        // --- MISE A JOUR DU VOLUME ---
-        // On récupère le volume (0.0 - 1.0) et on convertit en (0.0 - 100.0)
         float musicVol = mainMenu->m_optionsMenu.getMusicVolume() * 100.f;
         float sfxVol = mainMenu->m_optionsMenu.getSfxVolume() * 100.f;
         audioSystem.setGlobalVolume(musicVol, sfxVol);
@@ -224,6 +222,7 @@ void Game::update(float deltaTime) {
             currentState = GAME_OVER;
             gameOverMenu->setState(false, scoreSystem.getScore());
             audioSystem.playGameOverMusic();
+            audioSystem.playSound("DEATH_PLAYER");
         }
 
         bool iaDead = false;
@@ -237,6 +236,7 @@ void Game::update(float deltaTime) {
             npc->reset(1536.f, 64.f);
             trailSystem2->reset();
             scoreSystem.addKill();
+            audioSystem.playSound("DEATH_NPC");
         }
         iaDead = false;
 
@@ -249,6 +249,7 @@ void Game::update(float deltaTime) {
             npc2->reset(1536.f, 834.f);
             trailSystem3->reset();
             scoreSystem.addKill();
+            audioSystem.playSound("DEATH_NPC");
         }
 
         sf::Color playercol = sf::Color::White;
