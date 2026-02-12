@@ -217,9 +217,9 @@ int main() {
                 npc2.setActie(true);
             }
 
-            sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
-            sf::FloatRect npcBounds = CollisionManager::getHitbox(npc.getPosition(), 8.f);
-            sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2.getPosition(), 8.f);
+            sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 18.f);
+            sf::FloatRect npcBounds = CollisionManager::getHitbox(npc.getPosition(), 18.f);
+            sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2.getPosition(), 18.f);
 
             bool isDead = false;
 
@@ -319,8 +319,17 @@ int main() {
             npc2.draw(window);
 
             if (currentState == GAME && showHitbox) {
-                sf::FloatRect currentBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
-                CollisionManager::drawHitbox(window, currentBounds, sf::Color::Red);             
+                // Hitbox Joueur (Rouge)
+                sf::FloatRect playerBounds = CollisionManager::getHitbox(player.getPosition(), 18.f);
+                CollisionManager::drawHitbox(window, playerBounds, sf::Color::Red);
+
+                // Hitbox NPC 1 (Vert)
+                sf::FloatRect npcBounds = CollisionManager::getHitbox(npc.getPosition(), 18.f);
+                CollisionManager::drawHitbox(window, npcBounds, sf::Color::Red);
+
+                // Hitbox NPC 2 (Bleu)
+                sf::FloatRect npc2Bounds = CollisionManager::getHitbox(npc2.getPosition(), 18.f);
+                CollisionManager::drawHitbox(window, npc2Bounds, sf::Color::Red);
             }
 
             if (currentState == PAUSE) {
