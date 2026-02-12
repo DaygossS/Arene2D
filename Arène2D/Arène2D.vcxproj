@@ -133,6 +133,7 @@
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="FightState.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameOverMenu.cpp" />
     <ClCompile Include="MainCreateurLevel.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="conditions.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="FightState.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GameOverMenu.hpp" />
     <ClInclude Include="MainMenu.hpp" />
     <ClInclude Include="OptionsMenu.hpp" />
