@@ -72,6 +72,7 @@ private:
     bool hasGameStarted;
 
     bool isSpecialSkinActive;
+    int currentLevelIndex;
 
     void openMap(const std::string& filename);
     void processEvents();

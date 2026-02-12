@@ -43,7 +43,7 @@ void Npc::reset(float startX, float startY) {
     activate = false;
     sprite.setPosition({ startX, startY });
     m_velocity = { 0.f, 0.f };
-    sprite.setTexture(*textures.right, true);
+    sprite.setTexture(*textures.left, true);
     updateOrigin();
 }
 

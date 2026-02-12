@@ -19,31 +19,33 @@ public:
     int handleInput(sf::RenderWindow& window, const sf::Event& event);
 
     std::string getSelectedLevelFile() const;
+    int getSelectedLevelIndex() const { return m_selectedItemIndex; }
+
+    void unlockNextLevel(int completedLevelIndex);
 
     OptionsMenu m_optionsMenu;
+
 private:
+    void loadProgress();
+    void saveProgress();
+
     float m_width;
     float m_height;
     MenuState m_state;
 
     sf::Font m_font;
 
-    // Boutons Menu Principal
     std::vector<sf::Text> m_mainOptions;
-
-    // Boutons Niveaux
     std::vector<sf::Text> m_levelOptions;
     std::string m_selectedLevelFile;
     sf::Text m_returnButton;
 
     int m_selectedItemIndex;
+    int m_maxUnlockedLevel;
 
-
-    // Décors
     sf::Texture m_gridTexture;
     sf::Sprite m_gridSprite;
 
-    // Animation Voiture
     sf::Texture m_carTexture;
     sf::Sprite m_carSprite;
     sf::IntRect m_carRect;

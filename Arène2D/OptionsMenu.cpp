@@ -112,6 +112,14 @@ void OptionsMenu::setIsPauseMode(bool active) {
     update();
 }
 
+bool OptionsMenu::getUnlockAll() {
+    if (unlockAllTriggered) {
+        unlockAllTriggered = false;
+        return true;
+    }
+    return false;
+}
+
 void OptionsMenu::updateSliderValue(float mouseX, float& volumeVar, const sf::RectangleShape& track) {
     float x = track.getPosition().x;
     float width = track.getSize().x;
@@ -215,6 +223,11 @@ bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) 
                         arcadeMode = !arcadeMode;
                         m_feedbackText.setString(arcadeMode ? "Mode arcade" : "Mode normal");
                         m_feedbackText.setFillColor(sf::Color::Green);
+                    }
+                    else if (m_inputString == "c'est quoi le code pour debloquer tous les niveaux deja ?") {
+                        unlockAllTriggered = true;
+                        m_feedbackText.setString("c'est celui là");
+                        m_feedbackText.setFillColor(sf::Color::Magenta);
                     }
                     else {
                         m_feedbackText.setString("Code invalide");

@@ -7,6 +7,7 @@ Game::Game()
     hasGameStarted(false),
     currentState(MENU),
     isSpecialSkinActive(false),
+    currentLevelIndex(0),
     totalWidth(MAP_WIDTH* TILE_SIZE),
     gameHeight(MAP_HEIGHT* TILE_SIZE),
     totalHeight(gameHeight + HUD_HEIGHT),
@@ -165,6 +166,7 @@ void Game::processEvents() {
                 audioSystem.playSound("CLICK");
                 if (action == 1) {
                     std::string levelFile = mainMenu->getSelectedLevelFile();
+                    currentLevelIndex = mainMenu->getSelectedLevelIndex();
                     openMap(levelFile);
                     currentState = GAME;
                     resetLevel();
@@ -237,7 +239,6 @@ void Game::update(float deltaTime) {
         player->handleInput();
         player->update(deltaTime);
 
-        // --- CORRECTION: NPC ATTENDENT QUE hasGameStarted SOIT VRAI ---
         if (hasGameStarted) {
             if (npc->getActive()) {
                 npc->update(deltaTime, collisions, *trailSystem, *trailSystem2, *trailSystem3);
@@ -246,7 +247,6 @@ void Game::update(float deltaTime) {
                 npc2->update(deltaTime, collisions, *trailSystem, *trailSystem2, *trailSystem3);
             }
 
-            // On s'assure qu'ils sont marqués "Actie" pour leur FSM interne
             if (npc->getActive()) npc->setActie(true);
             if (npc2->getActive()) npc2->setActie(true);
         }
@@ -294,8 +294,6 @@ void Game::update(float deltaTime) {
 
                 if (isArcade) {
                     npc->reset(1536.f, 64.f);
-                    // IMPORTANT: en Arcade, reset() ne remet pas setActie(false) 
-                    // mais dans le doute on force
                     npc->setActie(true);
                 }
                 else {
@@ -330,6 +328,8 @@ void Game::update(float deltaTime) {
 
         if (!isArcade) {
             if (!npc->getActive() && !npc2->getActive()) {
+                mainMenu->unlockNextLevel(currentLevelIndex);
+
                 currentState = GAME_OVER;
                 gameOverMenu->setState(true, scoreSystem.getScore());
                 audioSystem.playGameOverMusic();

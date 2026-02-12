@@ -1,17 +1,48 @@
 #include "MainMenu.hpp"
 #include <iostream>
+#include <fstream>
 
 static sf::Color Bleu = sf::Color(0, 50, 100);
+static sf::Color Gris = sf::Color(100, 100, 100);
 
 MainMenu::MainMenu(float width, float height)
     : m_width(width), m_height(height), m_state(STATE_MAIN), m_returnButton(m_font),
     m_gridSprite(m_gridTexture), m_carSprite(m_carTexture),
-    m_animationTimer(0.f), m_currentFrame(0), m_selectedItemIndex(-1)
+    m_animationTimer(0.f), m_currentFrame(0), m_selectedItemIndex(-1),
+    m_maxUnlockedLevel(1)
 {
+    loadProgress();
+}
+
+void MainMenu::loadProgress() {
+    std::ifstream file("../Assets/Levels/save.txt");
+    if (file.is_open()) {
+        file >> m_maxUnlockedLevel;
+        file.close();
+    }
+    else {
+        m_maxUnlockedLevel = 1;
+    }
+}
+
+void MainMenu::saveProgress() {
+    std::ofstream file("../Assets/Levels/save.txt");
+    if (file.is_open()) {
+        file << m_maxUnlockedLevel;
+        file.close();
+    }
+}
+
+void MainMenu::unlockNextLevel(int completedLevelIndex) {
+    int nextLevel = completedLevelIndex + 2;
+    if (nextLevel > m_maxUnlockedLevel) {
+        m_maxUnlockedLevel = nextLevel;
+        saveProgress();
+    }
 }
 
 bool MainMenu::init(const std::string& fontPath) {
-    if (!m_font.openFromFile("../Assets/Fonts/arial.ttf")) return false;
+    if (!m_font.openFromFile(fontPath)) return false;
 
     sf::RenderTexture rt;
     int gridSize = 40;
@@ -62,7 +93,6 @@ bool MainMenu::init(const std::string& fontPath) {
         m_levelOptions.push_back(text);
     }
 
-    // Bouton RETOUR en rouge
     m_returnButton.setFont(m_font);
     m_returnButton.setString("RETOUR");
     m_returnButton.setCharacterSize(40);
@@ -92,6 +122,10 @@ bool MainMenu::init(const std::string& fontPath) {
 void MainMenu::update(float deltaTime) {
     if (m_state == STATE_OPTIONS) {
         m_optionsMenu.update();
+        if (m_optionsMenu.getUnlockAll()) {
+            m_maxUnlockedLevel = 100;
+            saveProgress();
+        }
         return;
     }
     m_animationTimer += deltaTime;
@@ -114,7 +148,18 @@ void MainMenu::draw(sf::RenderWindow& window) {
     }
     else if (m_state == STATE_LEVELS) {
         window.draw(m_carSprite);
-        for (const auto& text : m_levelOptions) window.draw(text);
+        for (size_t i = 0; i < m_levelOptions.size(); i++) {
+            if (static_cast<int>(i) < m_maxUnlockedLevel) {
+                if (static_cast<int>(i) == m_selectedItemIndex)
+                    m_levelOptions[i].setFillColor(sf::Color::White);
+                else
+                    m_levelOptions[i].setFillColor(Bleu);
+            }
+            else {
+                m_levelOptions[i].setFillColor(Gris);
+            }
+            window.draw(m_levelOptions[i]);
+        }
         window.draw(m_returnButton);
     }
     else {
@@ -137,7 +182,12 @@ int MainMenu::handleInput(sf::RenderWindow& window, const sf::Event& event) {
     if (m_state == STATE_LEVELS) {
         if (m_returnButton.getGlobalBounds().contains(mousePosF)) {
             m_returnButton.setFillColor(sf::Color::White);
-            if (event.is<sf::Event::MouseButtonPressed>()) m_state = STATE_MAIN;
+            if (event.is<sf::Event::MouseButtonPressed>()) {
+                if (event.getIf<sf::Event::MouseButtonPressed>()->button == sf::Mouse::Button::Left) {
+                    m_state = STATE_MAIN;
+                    return 10;
+                }
+            }
         }
         else {
             m_returnButton.setFillColor(sf::Color::Red);
@@ -148,19 +198,27 @@ int MainMenu::handleInput(sf::RenderWindow& window, const sf::Event& event) {
     m_selectedItemIndex = -1;
     for (size_t i = 0; i < currentMenu->size(); i++) {
         if ((*currentMenu)[i].getGlobalBounds().contains(mousePosF)) {
+            if (m_state == STATE_LEVELS && static_cast<int>(i) >= m_maxUnlockedLevel) {
+                continue;
+            }
             (*currentMenu)[i].setFillColor(sf::Color::White);
             m_selectedItemIndex = static_cast<int>(i);
         }
         else {
-            (*currentMenu)[i].setFillColor(Bleu);
+            if (m_state == STATE_LEVELS && static_cast<int>(i) >= m_maxUnlockedLevel) {
+                (*currentMenu)[i].setFillColor(Gris);
+            }
+            else {
+                (*currentMenu)[i].setFillColor(Bleu);
+            }
         }
     }
 
     if (const auto* mouseBtn = event.getIf<sf::Event::MouseButtonPressed>()) {
         if (mouseBtn->button == sf::Mouse::Button::Left && m_selectedItemIndex != -1) {
             if (m_state == STATE_MAIN) {
-                if (m_selectedItemIndex == 0) { m_state = STATE_LEVELS; return 0; }
-                if (m_selectedItemIndex == 1) { m_state = STATE_OPTIONS; return 0; }
+                if (m_selectedItemIndex == 0) { m_state = STATE_LEVELS; return 10; }
+                if (m_selectedItemIndex == 1) { m_state = STATE_OPTIONS; return 10; }
                 if (m_selectedItemIndex == 2) return 3;
             }
             else if (m_state == STATE_LEVELS) {

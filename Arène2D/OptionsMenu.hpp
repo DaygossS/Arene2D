@@ -20,6 +20,7 @@ public:
     bool getslow() const { return slow; }
     bool getrainbow() const { return rainbow; }
     bool getSpecialSkin() const { return specialSkin; }
+    bool getUnlockAll();
 
 private:
     void updateSliderValue(float mouseX, float& volumeVar, const sf::RectangleShape& track);
@@ -63,4 +64,5 @@ private:
     bool specialSkin = false;
     bool invincible;
     bool arcadeMode;
+    bool unlockAllTriggered;
 };
