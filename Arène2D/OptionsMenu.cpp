@@ -3,6 +3,7 @@
 #include <cmath> 
 
 static sf::Color Gris = sf::Color(100, 100, 100);
+static sf::Color Bleu = sf::Color(0, 50, 100);
 
 float OptionsMenu::s_musicVolume = 0.5f;
 float OptionsMenu::s_sfxVolume = 0.5f;
@@ -27,70 +28,73 @@ bool OptionsMenu::init(const std::string& fontPath, float width, float height) {
     m_windowWidth = width;
     m_windowHeight = height;
 
-    if (!m_font.openFromFile("../Assets/Fonts/arial.ttf")) return false;
+    if (!m_font.openFromFile(fontPath)) return false;
 
     m_tabVolumeText.setString("VOLUME");
     m_tabVolumeText.setCharacterSize(30);
-    m_tabVolumeText.setPosition({ width * 0.3f, 50.f });
+    m_tabVolumeText.setPosition({ width * 0.3f, height * 0.15f });
+    m_tabVolumeText.setFillColor(sf::Color::White);
 
     m_tabCodeText.setString("CODE");
     m_tabCodeText.setCharacterSize(30);
-    m_tabCodeText.setPosition({ width * 0.7f, 50.f });
+    m_tabCodeText.setPosition({ width * 0.6f, height * 0.15f });
+    m_tabCodeText.setFillColor(Gris);
 
-    m_musicTrack.setSize({ 300.f, 5.f });
-    m_musicTrack.setFillColor(sf::Color(100, 100, 100));
-    m_musicTrack.setPosition({ (width - 300.f) / 2.f, 200.f });
+    m_musicLabel.setString("Musique");
+    m_musicLabel.setCharacterSize(24);
+    m_musicLabel.setPosition({ width * 0.2f, height * 0.35f });
+
+    m_musicTrack.setSize({ width * 0.4f, 5.f });
+    m_musicTrack.setFillColor(sf::Color::White);
+    m_musicTrack.setPosition({ width * 0.4f, height * 0.37f });
 
     m_musicHandle.setRadius(10.f);
+    m_musicHandle.setFillColor(Bleu);
     m_musicHandle.setOrigin({ 10.f, 10.f });
-    m_musicHandle.setFillColor(sf::Color::White);
-    alignSlider(s_musicVolume, m_musicTrack, m_musicHandle);
+    m_musicHandle.setPosition({
+        m_musicTrack.getPosition().x + s_musicVolume * m_musicTrack.getSize().x,
+        m_musicTrack.getPosition().y + 2.5f
+        });
 
-    m_musicLabel.setCharacterSize(24);
-    m_musicLabel.setPosition({ m_musicTrack.getPosition().x, 160.f });
+    m_sfxLabel.setString("Effets");
+    m_sfxLabel.setCharacterSize(24);
+    m_sfxLabel.setPosition({ width * 0.2f, height * 0.55f });
 
-    m_sfxTrack.setSize({ 300.f, 5.f });
-    m_sfxTrack.setFillColor(sf::Color(100, 100, 100));
-    m_sfxTrack.setPosition({ (width - 300.f) / 2.f, 350.f });
+    m_sfxTrack.setSize({ width * 0.4f, 5.f });
+    m_sfxTrack.setFillColor(sf::Color::White);
+    m_sfxTrack.setPosition({ width * 0.4f, height * 0.57f });
 
     m_sfxHandle.setRadius(10.f);
+    m_sfxHandle.setFillColor(Bleu);
     m_sfxHandle.setOrigin({ 10.f, 10.f });
-    m_sfxHandle.setFillColor(sf::Color::White);
-    alignSlider(s_sfxVolume, m_sfxTrack, m_sfxHandle);
+    m_sfxHandle.setPosition({
+        m_sfxTrack.getPosition().x + s_sfxVolume * m_sfxTrack.getSize().x,
+        m_sfxTrack.getPosition().y + 2.5f
+        });
 
-    m_sfxLabel.setCharacterSize(24);
-    m_sfxLabel.setPosition({ m_sfxTrack.getPosition().x, 310.f });
-
-    m_inputBox.setSize({ 300.f, 40.f });
+    m_inputBox.setSize({ width * 0.4f, 40.f });
     m_inputBox.setFillColor(sf::Color(50, 50, 50));
     m_inputBox.setOutlineColor(sf::Color::White);
-    m_inputBox.setOutlineThickness(1.f);
-    m_inputBox.setPosition({ (width - 400.f) / 2.f, 250.f });
+    m_inputBox.setOutlineThickness(2.f);
+    m_inputBox.setPosition({ width * 0.3f, height * 0.4f });
 
     m_inputText.setCharacterSize(24);
     m_inputText.setFillColor(sf::Color::White);
-    m_inputText.setPosition({ m_inputBox.getPosition().x + 5.f, m_inputBox.getPosition().y + 5.f });
+    m_inputText.setPosition({ width * 0.31f, height * 0.41f });
 
-    m_validateBtnShape.setSize({ 90.f, 40.f });
-    m_validateBtnShape.setFillColor(Gris);
-    m_validateBtnShape.setPosition({ m_inputBox.getPosition().x + 310.f, 250.f });
-
-    m_validateBtnText.setString("OK");
-    m_validateBtnText.setCharacterSize(20);
-    m_validateBtnText.setPosition({ m_validateBtnShape.getPosition().x + 30.f, m_validateBtnShape.getPosition().y + 8.f });
+    m_validateBtnText.setString("Valider");
+    m_validateBtnText.setCharacterSize(24);
+    m_validateBtnText.setFillColor(sf::Color::White);
+    m_validateBtnText.setPosition({ width * 0.45f, height * 0.55f });
 
     m_feedbackText.setCharacterSize(20);
-    m_feedbackText.setFillColor(sf::Color::Green);
-    m_feedbackText.setPosition({ m_inputBox.getPosition().x, 300.f });
+    m_feedbackText.setPosition({ width * 0.3f, height * 0.65f });
 
-    m_backButton.setString("RETOUR");
+    m_backButton.setString("Retour");
     m_backButton.setCharacterSize(30);
-    m_backButton.setFillColor(sf::Color::Red);
-    sf::FloatRect textRect = m_backButton.getLocalBounds();
-    m_backButton.setOrigin({ textRect.size.x / 2.f, textRect.size.y / 2.f });
-    m_backButton.setPosition({ width / 2.f, height - 80.f });
+    m_backButton.setFillColor(sf::Color::White);
+    m_backButton.setPosition({ width * 0.05f, height * 0.9f });
 
-    update();
     return true;
 }
 
@@ -98,138 +102,122 @@ void OptionsMenu::setIsPauseMode(bool active) {
     m_isPauseMode = active;
     if (m_isPauseMode) {
         m_currentTab = TAB_VOLUME;
+        m_tabCodeText.setFillColor(sf::Color::Transparent);
     }
+    else {
+        m_tabCodeText.setFillColor(Gris);
+    }
+    update();
 }
 
-void OptionsMenu::alignSlider(float volume, sf::RectangleShape& track, sf::CircleShape& handle) {
-    float x = track.getPosition().x + (volume * track.getSize().x);
-    handle.setPosition({ x, track.getPosition().y + 2.5f });
-}
+void OptionsMenu::updateSliderValue(float mouseX, float& volumeVar, const sf::RectangleShape& track) {
+    float x = track.getPosition().x;
+    float width = track.getSize().x;
 
-void OptionsMenu::updateSliderValue(float mouseX, float& volume, const sf::RectangleShape& track) {
-    float relativeX = mouseX - track.getPosition().x;
-    volume = relativeX / track.getSize().x;
+    float value = (mouseX - x) / width;
 
-    if (volume < 0.f) volume = 0.f;
-    if (volume > 1.f) volume = 1.f;
+    if (value < 0.f) value = 0.f;
+    if (value > 1.f) value = 1.f;
+
+    volumeVar = value;
 }
 
 void OptionsMenu::update() {
-    m_musicLabel.setString("Musique : " + std::to_string((int)(s_musicVolume * 100)) + "%");
-    m_sfxLabel.setString("SFX : " + std::to_string((int)(s_sfxVolume * 100)) + "%");
-
-    alignSlider(s_musicVolume, m_musicTrack, m_musicHandle);
-    alignSlider(s_sfxVolume, m_sfxTrack, m_sfxHandle);
-
     if (m_currentTab == TAB_VOLUME) {
-        m_tabVolumeText.setFillColor(sf::Color::Blue);
-        m_tabCodeText.setFillColor(Gris);
+        m_tabVolumeText.setFillColor(sf::Color::White);
+        if (!m_isPauseMode) m_tabCodeText.setFillColor(Gris);
+
+        m_musicHandle.setPosition({
+            m_musicTrack.getPosition().x + s_musicVolume * m_musicTrack.getSize().x,
+            m_musicTrack.getPosition().y + 2.5f
+            });
+
+        m_sfxHandle.setPosition({
+            m_sfxTrack.getPosition().x + s_sfxVolume * m_sfxTrack.getSize().x,
+            m_sfxTrack.getPosition().y + 2.5f
+            });
     }
     else {
         m_tabVolumeText.setFillColor(Gris);
-        m_tabCodeText.setFillColor(sf::Color::Blue);
+        m_tabCodeText.setFillColor(sf::Color::White);
     }
 }
 
 bool OptionsMenu::handleEvent(const sf::Event& event, sf::RenderWindow& window) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    sf::Vector2f mousePosF((float)mousePos.x, (float)mousePos.y);
 
     if (const auto* mouseBtn = event.getIf<sf::Event::MouseButtonPressed>()) {
         if (mouseBtn->button == sf::Mouse::Button::Left) {
-
-            if (m_tabVolumeText.getGlobalBounds().contains(mousePosF)) {
-                m_currentTab = TAB_VOLUME;
-                m_feedbackText.setString("");
-            }
-            else if (!m_isPauseMode && m_tabCodeText.getGlobalBounds().contains(mousePosF)) {
-                m_currentTab = TAB_CODE;
-            }
 
             if (m_backButton.getGlobalBounds().contains(mousePosF)) {
                 return true;
             }
 
-            if (m_currentTab == TAB_VOLUME) {
-                sf::FloatRect musicArea = m_musicTrack.getGlobalBounds();
-                musicArea.size.y += 20;
-                musicArea.position.y -= 10;
-
-                sf::FloatRect sfxArea = m_sfxTrack.getGlobalBounds();
-                sfxArea.size.y += 20;
-                sfxArea.position.y -= 10;
-
-                if (musicArea.contains(mousePosF)) m_isDraggingMusic = true;
-                if (sfxArea.contains(mousePosF)) m_isDraggingSfx = true;
+            if (!m_isPauseMode && m_tabCodeText.getGlobalBounds().contains(mousePosF)) {
+                m_currentTab = TAB_CODE;
+                m_feedbackText.setString("");
+            }
+            if (m_tabVolumeText.getGlobalBounds().contains(mousePosF)) {
+                m_currentTab = TAB_VOLUME;
             }
 
-            if (m_currentTab == TAB_CODE && !m_isPauseMode) {
-                if (m_validateBtnShape.getGlobalBounds().contains(mousePosF)) {
-                    if (m_inputString == "test") {
-                        m_feedbackText.setString("Code Accepte : Mode test !");
+            if (m_currentTab == TAB_VOLUME) {
+                sf::FloatRect musicHitbox = m_musicTrack.getGlobalBounds();
+                // SFML 3.0 FIX: height -> size.y, top -> position.y
+                musicHitbox.size.y += 20.f;
+                musicHitbox.position.y -= 10.f;
+
+                if (musicHitbox.contains(mousePosF)) {
+                    m_isDraggingMusic = true;
+                    updateSliderValue(mousePosF.x, s_musicVolume, m_musicTrack);
+                }
+
+                sf::FloatRect sfxHitbox = m_sfxTrack.getGlobalBounds();
+                // SFML 3.0 FIX: height -> size.y, top -> position.y
+                sfxHitbox.size.y += 20.f;
+                sfxHitbox.position.y -= 10.f;
+
+                if (sfxHitbox.contains(mousePosF)) {
+                    m_isDraggingSfx = true;
+                    updateSliderValue(mousePosF.x, s_sfxVolume, m_sfxTrack);
+                }
+            }
+
+            if (m_currentTab == TAB_CODE) {
+                if (m_validateBtnText.getGlobalBounds().contains(mousePosF)) {
+                    if (m_inputString == "SPEEDY") {
+                        speedy = !speedy;
+                        m_feedbackText.setString(speedy ? "Vitesse activee !" : "Vitesse desactivee");
                         m_feedbackText.setFillColor(sf::Color::Green);
                     }
-                    else if (m_inputString == "speed") {
-                        if (!speedy) {
-                            m_feedbackText.setString("Code Accepte : Mode speedy !");
-                            m_feedbackText.setFillColor(sf::Color::Green);
-                            speedy = true;
-                            slow = false;
-                        }
-                        else {
-                            m_feedbackText.setString("Code Accepte : Mode speedy Deactive!");
-                            m_feedbackText.setFillColor(sf::Color::Red);
-                            speedy = false;
-                        }
-
+                    else if (m_inputString == "SLOW") {
+                        slow = !slow;
+                        m_feedbackText.setString(slow ? "Ralenti active !" : "Ralenti desactive");
+                        m_feedbackText.setFillColor(sf::Color::Green);
                     }
-                    else if (m_inputString == "slow") {
-                        if (!slow) {
-                            m_feedbackText.setString("Code Accepte : Mode snail !");
-                            m_feedbackText.setFillColor(sf::Color::Green);
-                            slow = true;
-                            speedy = false;
-                        }
-                        else {
-                            m_feedbackText.setString("Code Accepte : Mode snail Deactive!");
-                            m_feedbackText.setFillColor(sf::Color::Red);
-                            slow = false;
-                        }
-
-                    }
-                    else if (m_inputString == "rainbow") {
-                        if (!rainbow) {
-                            m_feedbackText.setString("Code Accepte : Mode rainbow !");
-                            m_feedbackText.setFillColor(sf::Color::Green);
-                            rainbow = true;
-                        }
-                        else {
-                            m_feedbackText.setString("Code Accepte : Mode rainbow Deactive!");
-                            m_feedbackText.setFillColor(sf::Color::Red);
-                            rainbow = false;
-                        }
-
+                    else if (m_inputString == "RAINBOW") {
+                        rainbow = !rainbow;
+                        m_feedbackText.setString(rainbow ? "Rainbow active !" : "Rainbow desactive");
+                        m_feedbackText.setFillColor(sf::Color::Green);
                     }
                     else {
-                        m_feedbackText.setString("Code Invalide.");
-                        m_feedbackText.setFillColor(sf::Color::White);
+                        m_feedbackText.setString("Code invalide");
+                        m_feedbackText.setFillColor(sf::Color::Red);
                     }
                 }
             }
         }
     }
 
-    if (const auto* mouseRel = event.getIf<sf::Event::MouseButtonReleased>()) {
-        if (mouseRel->button == sf::Mouse::Button::Left) {
+    if (const auto* mouseBtn = event.getIf<sf::Event::MouseButtonReleased>()) {
+        if (mouseBtn->button == sf::Mouse::Button::Left) {
             m_isDraggingMusic = false;
             m_isDraggingSfx = false;
         }
     }
 
     if (event.is<sf::Event::MouseMoved>()) {
-        if (m_backButton.getGlobalBounds().contains(mousePosF)) m_backButton.setFillColor(sf::Color::Red);
-        else m_backButton.setFillColor(sf::Color::White);
-
         if (m_currentTab == TAB_VOLUME) {
             if (m_isDraggingMusic) {
                 updateSliderValue(mousePosF.x, s_musicVolume, m_musicTrack);
@@ -276,10 +264,9 @@ void OptionsMenu::draw(sf::RenderWindow& window) {
         window.draw(m_sfxTrack);
         window.draw(m_sfxHandle);
     }
-    else if (m_currentTab == TAB_CODE && !m_isPauseMode) {
+    else if (m_currentTab == TAB_CODE) {
         window.draw(m_inputBox);
         window.draw(m_inputText);
-        window.draw(m_validateBtnShape);
         window.draw(m_validateBtnText);
         window.draw(m_feedbackText);
     }

@@ -1,24 +1,20 @@
 #include "Game.h"
-#include "smallthing.cpp" // Pour createTronTexture et rainbowing
+#include "smallthing.cpp" 
 
 Game::Game()
     : ticks(0.f),
     showHitbox(false),
     hasGameStarted(false),
     currentState(MENU),
-    // Calcul des dimensions avant l'init de la fenêtre
     totalWidth(MAP_WIDTH* TILE_SIZE),
     gameHeight(MAP_HEIGHT* TILE_SIZE),
     totalHeight(gameHeight + HUD_HEIGHT),
-    // Init de la fenêtre
     window(sf::VideoMode({ totalWidth, totalHeight }), "TRON GAME"),
-    // Init des textures et du sprite (Correction erreur constructeur)
     tileset(createTronTexture(TILE_SIZE, TEXTURE_COLS)),
     mapSprite(tileset)
 {
     window.setFramerateLimit(60);
 
-    // Correction Erreur View (reset n'existe plus en SFML 3, on réassigne)
     gameView = sf::View(sf::FloatRect({ 0.f, 0.f }, { (float)totalWidth, (float)gameHeight }));
 
     float viewportY = (float)HUD_HEIGHT / (float)totalHeight;
@@ -30,7 +26,6 @@ Game::Game()
     hudBackground.setSize({ (float)totalWidth, (float)HUD_HEIGHT });
     hudBackground.setFillColor(sf::Color(30, 30, 30));
 
-    // 5. Chargement Textures
     if (!pZ.loadFromFile("../Assets/Player/playerZ.png") ||
         !pS.loadFromFile("../Assets/Player/playerS.png") ||
         !pQ.loadFromFile("../Assets/Player/playerQ.png") ||
@@ -55,11 +50,9 @@ Game::Game()
     }
     PlayerTextures npc2Assets = { e2Z, e2S, e2Q, e2D };
 
-    // 6. Initialisation Vecteurs Map
     map.resize(MAP_WIDTH * MAP_HEIGHT, 0);
     collisions.resize(MAP_WIDTH * MAP_HEIGHT, 0);
 
-    // 7. Initialisation Entités
     player = new Player(100.f, 300.f, playerAssets);
 
     npc = new Npc(100.f, 300.f, npc1Assets);
@@ -72,7 +65,6 @@ Game::Game()
     trailSystem2 = new TrailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
     trailSystem3 = new TrailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
 
-    // 8. Initialisation Systèmes
     if (!scoreSystem.init("../Assets/Fonts/arial.ttf")) std::cout << "Erreur police score" << std::endl;
 
     mainMenu = new MainMenu((float)totalWidth, (float)totalHeight);
@@ -126,6 +118,13 @@ void Game::resetLevel() {
 void Game::run() {
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
+
+        // --- MISE A JOUR DU VOLUME ---
+        // On récupère le volume (0.0 - 1.0) et on convertit en (0.0 - 100.0)
+        float musicVol = mainMenu->m_optionsMenu.getMusicVolume() * 100.f;
+        float sfxVol = mainMenu->m_optionsMenu.getSfxVolume() * 100.f;
+        audioSystem.setGlobalVolume(musicVol, sfxVol);
+
         audioSystem.update();
 
         processEvents();
@@ -135,13 +134,10 @@ void Game::run() {
 }
 
 void Game::processEvents() {
-    // --- Correction SFML 3.0 : Plus de "sf::Event event;" déclaré avant ---
     while (const auto event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) window.close();
 
         if (currentState == MENU) {
-            // Note: handleInput attend probablement une référence ou le contenu
-            // Dans ton main original tu passais *event
             int action = mainMenu->handleInput(window, *event);
             if (action == 1) {
                 std::string levelFile = mainMenu->getSelectedLevelFile();
@@ -174,11 +170,9 @@ void Game::processEvents() {
             }
         }
         else if (currentState == GAME_OVER) {
-            // GameOverMenu prend *event d'après ton main original
             GameOverAction action = gameOverMenu->handleEvent(*event, window);
             if (action == GameOverAction::Restart) {
                 resetLevel();
-                // Override car resetLevel met en pause ou menu parfois selon logique précédente
                 hasGameStarted = false;
                 currentState = GAME;
                 audioSystem.playGameMusic();

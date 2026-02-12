@@ -3,8 +3,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <list>
 
-// On définit les différents états musicaux
 enum class MusicState {
     None,
     Menu,
@@ -18,10 +18,11 @@ class AudioSystem {
 public:
     AudioSystem();
 
-    bool init(); // Charge les bruitages
-    void update(); // Gère le passage à la musique suivante
+    bool init();
+    void update();
 
-    // Fonctions spécifiques pour simplifier la vie
+    void setGlobalVolume(float musicVolume, float sfxVolume);
+
     void playMenuMusic();
     void playGameMusic();
     void playPauseMusic();
@@ -37,16 +38,16 @@ private:
     sf::Music m_music;
     MusicState m_currentState;
 
-    // Playlists (Listes de fichiers)
+    float m_currentMusicVolume;
+    float m_currentSfxVolume;
+
     std::vector<std::string> m_gamePlaylist;
     std::vector<std::string> m_victoryPlaylist;
 
-    // Chemins uniques
     std::string m_menuTheme;
     std::string m_pauseTheme;
     std::string m_gameOverTheme;
 
-    // Bruitages (SFX)
     std::map<std::string, sf::SoundBuffer> m_soundBuffers;
     std::list<sf::Sound> m_activeSounds;
 };
