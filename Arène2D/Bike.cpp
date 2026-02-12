@@ -74,7 +74,7 @@ void Npc::update(float deltaTime, std::vector<int> collisions, TrailSystem& trai
 
     // 1. Initialisation du mouvement si à l'arrêt
     if (m_velocity.x == 0 && m_velocity.y == 0) {
-        m_velocity = { 1.f, 0.f }; // On démarre vers la droite par défaut
+        m_velocity = { -1.f, 0.f }; // On démarre vers la gauche par défaut
         sprite.setTexture(textures.right, true);
         updateOrigin();
     }
@@ -83,7 +83,8 @@ void Npc::update(float deltaTime, std::vector<int> collisions, TrailSystem& trai
 
     // Distance d'anticipation (Regarde devant lui)
     // Plus le chiffre est grand, plus il anticipe tôt. 40.f est un bon compromis.
-    float lookAheadDist = 40.f;
+    // m_speed * m_velocity * deltaTime
+    float lookAheadDist = m_speed * deltaTime * 2;
     sf::Vector2f futurePos = currentPos + (m_velocity * lookAheadDist);
 
     bool dangerAhead = !isPositionSafe(futurePos, collisions, trailMask, trailMask2, trailMask3, m_velocity);
@@ -93,7 +94,7 @@ void Npc::update(float deltaTime, std::vector<int> collisions, TrailSystem& trai
     bool changeDir = false;
 
     // Si danger devant OU un petit coup de folie aléatoire (pour ne pas faire que des lignes droites)
-    if (dangerAhead || (rand() % 200 == 0)) {
+    if (dangerAhead || (rand() % 140 == 0)) {
 
         // Calcul des directions possibles (Gauche et Droite relatives)
         sf::Vector2f leftTurn, rightTurn;
