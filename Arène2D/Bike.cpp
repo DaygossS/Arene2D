@@ -94,7 +94,7 @@ void Npc::update(float deltaTime, std::vector<int> collisions, TrailSystem& trai
     bool changeDir = false;
 
     // Si danger devant OU un petit coup de folie aléatoire (pour ne pas faire que des lignes droites)
-    if (dangerAhead || (rand() % 140 == 0)) {
+    if (dangerAhead || (rand() % 100 == 0)) {
 
         // Calcul des directions possibles (Gauche et Droite relatives)
         sf::Vector2f leftTurn, rightTurn;
