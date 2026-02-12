@@ -125,7 +125,10 @@ void MainMenu::draw(sf::RenderWindow& window) {
 
 int MainMenu::handleInput(sf::RenderWindow& window, const sf::Event& event) {
     if (m_state == STATE_OPTIONS) {
-        if (m_optionsMenu.handleEvent(event, window)) m_state = STATE_MAIN;
+        if (m_optionsMenu.handleEvent(event, window)) {
+            m_state = STATE_MAIN;
+            return 10;
+        }
         return 0;
     }
 

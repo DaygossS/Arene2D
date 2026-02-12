@@ -135,15 +135,26 @@ void Game::processEvents() {
     while (const auto event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) window.close();
 
+        // NOTE SUR LA LATENCE : Si le son a du retard, vérifiez votre fichier .wav
+        // Il y a souvent du silence au début du fichier audio qu'il faut couper (avec Audacity par exemple).
+
         if (currentState == MENU) {
             int action = mainMenu->handleInput(window, *event);
-            if (action == 1) {
-                std::string levelFile = mainMenu->getSelectedLevelFile();
-                openMap(levelFile);
-                currentState = GAME;
-                resetLevel();
+
+            // Si action != 0, c'est qu'un bouton a été cliqué.
+            // On joue le son AVANT de charger la map pour réduire la latence perçue.
+            if (action != 0) {
+                audioSystem.playSound("CLICK");
+
+                if (action == 1) {
+                    std::string levelFile = mainMenu->getSelectedLevelFile();
+                    openMap(levelFile);
+                    currentState = GAME;
+                    resetLevel();
+                }
+                if (action == 3) window.close();
+                // Action 10 = Navigation (Options, Retour...), on joue juste le son.
             }
-            if (action == 3) window.close();
         }
         else if (currentState == GAME) {
             if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
@@ -157,28 +168,38 @@ void Game::processEvents() {
         }
         else if (currentState == PAUSE) {
             int action = pauseMenu->handleInput(window, *event);
-            if (action == 1) {
-                currentState = GAME;
-                audioSystem.playGameMusic();
-            }
-            if (action == 2) {
-                currentState = MENU;
-                hasGameStarted = false;
-                audioSystem.playMenuMusic();
+
+            if (action != 0) {
+                audioSystem.playSound("CLICK");
+
+                if (action == 1) {
+                    currentState = GAME;
+                    audioSystem.playGameMusic();
+                }
+                if (action == 2) {
+                    currentState = MENU;
+                    hasGameStarted = false;
+                    audioSystem.playMenuMusic();
+                }
             }
         }
         else if (currentState == GAME_OVER) {
             GameOverAction action = gameOverMenu->handleEvent(*event, window);
-            if (action == GameOverAction::Restart) {
-                resetLevel();
-                hasGameStarted = false;
-                currentState = GAME;
-                audioSystem.playGameMusic();
-            }
-            else if (action == GameOverAction::BackToMenu) {
-                currentState = MENU;
-                hasGameStarted = false;
-                audioSystem.playMenuMusic();
+
+            if (action != GameOverAction::None) {
+                audioSystem.playSound("CLICK");
+
+                if (action == GameOverAction::Restart) {
+                    resetLevel();
+                    hasGameStarted = false;
+                    currentState = GAME;
+                    audioSystem.playGameMusic();
+                }
+                else if (action == GameOverAction::BackToMenu) {
+                    currentState = MENU;
+                    hasGameStarted = false;
+                    audioSystem.playMenuMusic();
+                }
             }
         }
     }

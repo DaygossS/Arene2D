@@ -29,7 +29,6 @@ AudioSystem::AudioSystem()
     };
 }
 
-// MODIFICATION ICI : Chargement des bruitages
 bool AudioSystem::init() {
     bool success = true;
 
@@ -42,6 +41,10 @@ bool AudioSystem::init() {
     // Chargement du son de mort des NPCs
     if (!m_soundBuffers["DEATH_NPC"].loadFromFile("../Assets/SoundEffects/Death.wav")) {
         std::cerr << "Erreur: Impossible de charger Death.wav" << std::endl;
+        success = false;
+    }
+    if (!m_soundBuffers["CLICK"].loadFromFile("../Assets/SoundEffects/Click.wav")) {
+        std::cerr << "Erreur: Impossible de charger Click.wav" << std::endl;
         success = false;
     }
 

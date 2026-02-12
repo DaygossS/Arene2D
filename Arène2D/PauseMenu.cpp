@@ -72,6 +72,7 @@ int PauseMenu::handleInput(sf::RenderWindow& window, const sf::Event& event) {
         // Si handleEvent renvoie true (bouton retour cliqué), on revient au menu principal de pause
         if (m_optionsMenu.handleEvent(event, window)) {
             m_state = PAUSE_MAIN;
+            return 10;
         }
         return 0;
     }
