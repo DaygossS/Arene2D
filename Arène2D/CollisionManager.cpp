@@ -30,7 +30,7 @@ namespace CollisionManager {
         return false;
     }
 
-    // NOUVEAU : L'implémentation du dessin
+
     void drawHitbox(sf::RenderWindow& window, const sf::FloatRect& bounds, sf::Color color) {
         sf::RectangleShape debugShape;
         debugShape.setPosition(bounds.position);

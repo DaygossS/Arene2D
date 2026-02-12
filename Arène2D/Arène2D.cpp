@@ -13,16 +13,13 @@
 #include "GameOverMenu.hpp" 
 #include "AudioSystem.hpp"
 #include "smallthing.cpp"
-
-
+#include "Bike.h"
 
 const int TILE_SIZE = 32;
 const int MAP_WIDTH = 50;
 const int MAP_HEIGHT = 28;
 const int TEXTURE_COLS = 5;
 const int HUD_HEIGHT = 60;
-
-#include "Bike.cpp"
 
 enum GameState { MENU, GAME, PAUSE, OPTIONS, GAME_OVER };
 
@@ -35,15 +32,12 @@ static void openMap(std::vector<int>& mapData, std::vector<int>& colData, const 
     while (count < colData.size() && file >> val) { colData[count++] = val; }
 }
 
-
-
 int main() {
     unsigned int totalWidth = MAP_WIDTH * TILE_SIZE;
     unsigned int gameHeight = MAP_HEIGHT * TILE_SIZE;
     unsigned int totalHeight = gameHeight + HUD_HEIGHT;
 
     float ticks = 0.f;
-
 
     sf::RenderWindow window(sf::VideoMode({ totalWidth, totalHeight }), "TRON GAME");
     window.setFramerateLimit(60);
@@ -68,19 +62,39 @@ int main() {
     }
     PlayerTextures playerAssets = { pZ, pS, pQ, pD };
 
+    sf::Texture e1Z, e1S, e1Q, e1D;
+    if (!e1Z.loadFromFile("../Assets/Npc/Npc1Z.png") ||
+        !e1S.loadFromFile("../Assets/Npc/Npc1S.png") ||
+        !e1Q.loadFromFile("../Assets/Npc/Npc1Q.png") ||
+        !e1D.loadFromFile("../Assets/Npc/Npc1D.png")) {
+        std::cout << "Erreur chargement textures NPC 1" << std::endl;
+        return -1;
+    }
+    PlayerTextures npc1Assets = { e1Z, e1S, e1Q, e1D };
+
+    sf::Texture e2Z, e2S, e2Q, e2D;
+    if (!e2Z.loadFromFile("../Assets/Npc/Npc2Z.png") ||
+        !e2S.loadFromFile("../Assets/Npc/Npc2S.png") ||
+        !e2Q.loadFromFile("../Assets/Npc/Npc2Q.png") ||
+        !e2D.loadFromFile("../Assets/Npc/Npc2D.png")) {
+        std::cout << "Erreur chargement textures NPC 2" << std::endl;
+        return -1;
+    }
+    PlayerTextures npc2Assets = { e2Z, e2S, e2Q, e2D };
+
     std::vector<int> map(MAP_WIDTH * MAP_HEIGHT, 0);
     std::vector<int> collisions(MAP_WIDTH * MAP_HEIGHT, 0);
 
     Player player(100.f, 300.f, playerAssets);
-    //TODO: donner des spritesheet aux ia et (des sens (m'en oqp quand yaura les spritesheet))
-    Npc npc(100.f, 300.f, playerAssets);
-    Npc npc2(100.f, 300.f, playerAssets);
+
+    Npc npc(100.f, 300.f, npc1Assets);
+    Npc npc2(100.f, 300.f, npc2Assets);
     npc.Init();
     npc2.Init();
+
     TrailSystem trailSystem(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
     TrailSystem trailSystem2(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
     TrailSystem trailSystem3(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, 6.f);
-
 
     ScoreSystem scoreSystem;
     if (!scoreSystem.init("../Assets/Fonts/arial.ttf")) std::cout << "Erreur police score" << std::endl;
@@ -94,11 +108,9 @@ int main() {
     GameOverMenu gameOverMenu;
     if (!gameOverMenu.init("../Assets/Fonts/arial.ttf", (float)totalWidth, (float)totalHeight)) std::cout << "Erreur police gameover" << std::endl;
 
-    // --- AUDIO SYSTEM ---
     AudioSystem audioSystem;
     if (!audioSystem.init()) std::cout << "Erreur init audio" << std::endl;
     audioSystem.playMenuMusic();
-    // --------------------
 
     sf::RectangleShape hudBackground({ (float)totalWidth, (float)HUD_HEIGHT });
     hudBackground.setFillColor(sf::Color(30, 30, 30));
@@ -112,7 +124,6 @@ int main() {
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
 
-        // Mise à jour de la playlist
         audioSystem.update();
 
         while (const auto event = window.pollEvent()) {
@@ -134,7 +145,7 @@ int main() {
                     trailSystem3.reset();
                     scoreSystem.reset();
 
-                    audioSystem.playGameMusic(); // <--- JEU
+                    audioSystem.playGameMusic();
                 }
                 if (action == 3) window.close();
             }
@@ -142,7 +153,7 @@ int main() {
                 if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
                     if (key->scancode == sf::Keyboard::Scancode::Escape) {
                         currentState = PAUSE;
-                        audioSystem.playPauseMusic(); // <--- PAUSE
+                        audioSystem.playPauseMusic();
                     }
                     if (key->scancode == sf::Keyboard::Scancode::K) scoreSystem.addKill();
                     if (key->scancode == sf::Keyboard::Scancode::F1) showHitbox = !showHitbox;
@@ -152,12 +163,12 @@ int main() {
                 int action = pauseMenu.handleInput(window, *event);
                 if (action == 1) {
                     currentState = GAME;
-                    audioSystem.playGameMusic(); // <--- REPRISE JEU
+                    audioSystem.playGameMusic();
                 }
                 if (action == 2) {
                     currentState = MENU;
                     hasGameStarted = false;
-                    audioSystem.playMenuMusic(); // <--- RETOUR MENU
+                    audioSystem.playMenuMusic();
                 }
             }
             else if (currentState == GAME_OVER) {
@@ -173,13 +184,13 @@ int main() {
                     hasGameStarted = false;
                     currentState = GAME;
 
-                    audioSystem.playGameMusic(); // <--- RESTART
+                    audioSystem.playGameMusic();
                 }
                 else if (action == GameOverAction::BackToMenu) {
                     currentState = MENU;
                     hasGameStarted = false;
 
-                    audioSystem.playMenuMusic(); // <--- RETOUR MENU
+                    audioSystem.playMenuMusic();
                 }
             }
         }
@@ -197,7 +208,6 @@ int main() {
             if (!hasGameStarted) {
                 if (player.getVelocity().x != 0 || player.getVelocity().y != 0) {
                     hasGameStarted = true;
-                    
                 }
             }
 
@@ -222,7 +232,7 @@ int main() {
                 currentState = GAME_OVER;
                 gameOverMenu.setState(false, scoreSystem.getScore());
 
-                audioSystem.playGameOverMusic(); // <--- GAME OVER
+                audioSystem.playGameOverMusic();
             }
 
             bool iaDead = false;
@@ -236,7 +246,6 @@ int main() {
                 npc.reset(1536.f, 64.f);
                 trailSystem2.reset();
                 scoreSystem.addKill();
-
             }
             iaDead = false;
 
@@ -249,7 +258,6 @@ int main() {
                 npc2.reset(1536.f, 834.f);
                 trailSystem3.reset();
                 scoreSystem.addKill();
-
             }
 
             sf::Color playercol = sf::Color::White;
@@ -257,9 +265,8 @@ int main() {
                 playercol = rainbowing(ticks);
             }
             trailSystem.addTrail(player.getPosition(), playercol);
-            trailSystem2.addTrail(npc.getPosition(), sf::Color::Red);
-            trailSystem3.addTrail(npc2.getPosition(), sf::Color::Blue);
-
+            trailSystem2.addTrail(npc.getPosition(), sf::Color::Yellow);
+            trailSystem3.addTrail(npc2.getPosition(), sf::Color::Magenta);
 
             if (mainMenu.m_optionsMenu.getspeedy()) {
                 player.setSpeed(600.f);
@@ -313,7 +320,7 @@ int main() {
 
             if (currentState == GAME && showHitbox) {
                 sf::FloatRect currentBounds = CollisionManager::getHitbox(player.getPosition(), 8.f);
-                CollisionManager::drawHitbox(window, currentBounds, sf::Color::Red);
+                CollisionManager::drawHitbox(window, currentBounds, sf::Color::Red);             
             }
 
             if (currentState == PAUSE) {
@@ -326,12 +333,8 @@ int main() {
                 gameOverMenu.draw(window);
             }
         }
-        
 
         window.display();
     }
     return 0;
 }
-
-
-
